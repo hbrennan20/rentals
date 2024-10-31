@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Grid, Paper, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
 import Confetti from 'react-confetti';
 import initialData from '../data/pipeline-data.json';
+import axios from 'axios';
 
 // Define a type for the stages
 type Stage = {
@@ -29,11 +30,32 @@ const SalesPipeline = () => {
     const [sourceStageId, setSourceStageId] = useState('');
     const [showConfetti, setShowConfetti] = useState(false);
 
-    const handleMoveTask = (task: any, sourceId: string, destinationId: string) => {
+    const handleMoveTask = async (task: any, sourceId: string, destinationId: string) => {
         const destinationStage = data.stages[destinationId];
         if (destinationStage) {
             setTaskToMove(task);
             setSourceStageId(sourceId);
+            
+            // Create new data object instead of modifying initialData
+            const updatedData = {
+                ...data,
+                stages: {
+                    ...data.stages,
+                    [sourceId]: {
+                        ...data.stages[sourceId],
+                        tasks: data.stages[sourceId].tasks.filter(t => t.id !== task.id)
+                    },
+                    [destinationId]: {
+                        ...data.stages[destinationId],
+                        tasks: [...data.stages[destinationId].tasks, task]
+                    }
+                }
+            };
+
+            // Update state and send to server
+            setData(updatedData);
+            await updatePipelineData(updatedData);
+            
             confirmMoveTask(destinationId);
         }
     };
@@ -68,6 +90,15 @@ const SalesPipeline = () => {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         });
+    };
+
+    // New function to update the JSON data on the server
+    const updatePipelineData = async (updatedData: PipelineData) => {
+        try {
+            await axios.post('/api/update-pipeline', updatedData); // Adjust the endpoint as necessary
+        } catch (error) {
+            console.error("Error updating pipeline data:", error);
+        }
     };
 
     return (

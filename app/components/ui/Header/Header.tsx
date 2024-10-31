@@ -55,7 +55,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
               textAlign: 'left'
             }}
           >
-            GovTract
+            Rentals
           </Typography>
         </a>
         {isSessionAvailable ? (

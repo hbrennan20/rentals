@@ -38,7 +38,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
       sx={{
         width: '100%',
         left: isSessionAvailable ? '50px' : 0,
-        backgroundColor: '#f3f6f7',
+        backgroundColor: '#1b3135',
         boxShadow: 'none'
       }}
     >
@@ -47,8 +47,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
           <Typography
             variant="h2"
             sx={{
-              // Changed from h5 to h4 for larger text
-              color: '#1f1f1f',
+              color: 'white',
               fontWeight: 'bold',
               padding: '8px 16px',
               borderRadius: '4px',
@@ -108,7 +107,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
             <Link href="/auth" passHref>
               <Button
                 variant="contained"
-                sx={{ backgroundColor: '#1f1f1f', color: 'white' }}
+                sx={{ backgroundColor: 'white', color: '#1b3135' }}
               >
                 Sign In
               </Button>

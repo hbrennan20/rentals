@@ -130,7 +130,7 @@ const CustomerDashboard = () => {
           gap: 2 // Add gap between elements
         }}
       >
-        <Typography variant="h4" component="h1" fontWeight="bold" color="#1f1f1f">
+        <Typography variant="h4" component="h1" fontWeight="bold" color="#1b3135">
           Hello Hugh 👋,
         </Typography>
         <TextField

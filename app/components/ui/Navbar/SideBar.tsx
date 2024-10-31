@@ -80,7 +80,7 @@ const BackgroundBox = styled(Box)(({ theme }) => ({
   left: 0,
   width: 50,
   height: '100%',
-  backgroundColor: '#1f1f1f',
+  backgroundColor: '#1b3135',
   zIndex: 1200
 }));
 
@@ -107,10 +107,10 @@ const SideBar: FC<SideBarProps> = ({ session }) => {
     {
       text: 'Contract Dashboard',
       icon: <AttachMoneyIcon />,
-      path: '/contracts'
+      path: '/properties'
     },
     { text: 'Sales Pipeline', icon: <AssessmentIcon />, path: '/pipeline' },
-    { text: 'Contract Analysis', icon: <InsightsIcon />, path: '/contracts/new' },
+    { text: 'Contract Analysis', icon: <InsightsIcon />, path: '/properties/new' },
     { text: 'Historic Contracts', icon: <HistoryIcon />, path: '/historic_contracts' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' }    
   ];
@@ -145,7 +145,7 @@ const SideBar: FC<SideBarProps> = ({ session }) => {
 
   const drawerContent = (
     <StyledBox
-      sx={{ width: 200, bgcolor: '#1f1f1f', color: 'white' }}
+      sx={{ width: 200, bgcolor: '#1b3135', color: 'white' }}
       role="presentation"
       onClick={toggleDrawer(false)}
     >

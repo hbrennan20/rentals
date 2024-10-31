@@ -49,7 +49,7 @@ const BannerComponent: React.FC<BannerComponentProps> = ({ session, userEmail })
                 <Button
                   variant="contained"
                   sx={{ 
-                    backgroundColor: '#1f1f1f',
+                    backgroundColor: '#1b3135',
                     color: 'white',
                     mb: { xs: 2, sm: 0 },
                     mr: { sm: 3 },
@@ -69,8 +69,8 @@ const BannerComponent: React.FC<BannerComponentProps> = ({ session, userEmail })
               <Button
                 variant="outlined"
                 sx={{ 
-                  color: '#1f1f1f',
-                  borderColor: '#1f1f1f',
+                  color: '#1b3135',
+                  borderColor: '#1b3135',
                   py: 2,
                   px: 4,
                   fontSize: { xs: '1rem', md: '1.1rem' },

@@ -79,7 +79,7 @@ const PricingCard: React.FC<PricingPlan> = ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        backgroundColor: highlighted ? '#1f1f1f' : 'background.paper', // Updated color for highlighted
+        backgroundColor: highlighted ? '#1b3135' : 'background.paper', // Updated color for highlighted
         color: highlighted ? 'primary.contrastText' : 'text.primary'
       }}
     >
@@ -147,7 +147,7 @@ const Pricing: React.FC = () => {
         <Box sx={{ textAlign: 'center', mb: 10 }}>
           <Typography
             variant="h2"
-            color="#1f1f1f"
+            color="#1b3135"
             sx={{
               fontWeight: 'bold',
               fontFamily: 'Inter, sans-serif',

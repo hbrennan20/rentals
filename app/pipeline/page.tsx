@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
 import Confetti from 'react-confetti';
+import initialData from '../data/pipeline-data.json';
 
 // Define a type for the stages
 type Stage = {
@@ -15,36 +16,14 @@ type Stages = {
     [key: string]: Stage; // Allow indexing with a string
 };
 
-const initialData = {
-    stages: {
-        'stage-1': {
-            id: 'stage-1',
-            title: 'Leads',
-            tasks: [
-                { id: 'task-1', content: 'Irish Public Works Contract', value: 25000 },
-                { id: 'task-2', content: 'Design and Build Contract', value: 175000 },
-                { id: 'task-3', content: 'Framework Agreement for Construction', value: 320000 }
-            ]
-        },
-        'stage-2': {
-            id: 'stage-2',
-            title: 'Qualified',
-            tasks: [
-                { id: 'task-4', content: 'Construction Management Contract', value: 89000 },
-                { id: 'task-5', content: 'Traditional Contract for Building Works', value: 145000 }
-            ]
-        },
-        'stage-3': { id: 'stage-3', title: 'Proposal', tasks: [
-            { id: 'task-6', content: 'Public Private Partnership (PPP) Project', value: 420000 }
-        ]},
-        'stage-4': { id: 'stage-4', title: 'Won', tasks: [] },
-        'stage-5': { id: 'stage-5', title: 'Lost', tasks: [] },
-    },
-    stageOrder: ['stage-1', 'stage-2', 'stage-3', 'stage-4', 'stage-5'],
+// Add this type definition
+type PipelineData = {
+    stages: Stages;
+    stageOrder: string[];
 };
 
 const SalesPipeline = () => {
-    const [data, setData] = useState(initialData);
+    const [data, setData] = useState<PipelineData>(initialData);
     const [openDialog, setOpenDialog] = useState(false);
     const [taskToMove, setTaskToMove] = useState(null);
     const [sourceStageId, setSourceStageId] = useState('');
@@ -139,7 +118,7 @@ const SalesPipeline = () => {
                                                     cursor: 'grab',
                                                     maxWidth: '250px'
                                                 }}
-                                                onClick={() => window.location.href = `/contracts/${task.id}`}
+                                                onClick={() => window.location.href = `/properties/${task.id}`}
                                             >
                                                 <Paper style={{ 
                                                     padding: '8px', 

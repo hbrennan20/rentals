@@ -211,7 +211,7 @@ const HomePage = () => {
       {/* New Section for Call to Action */}
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2, bgcolor: '#ffffff', textAlign: 'center' }}>
-          <Button variant="contained" color="primary" href="/contracts" sx={{ fontSize: '1.5rem', padding: '1rem 2rem' }}>
+          <Button variant="contained" color="primary" href="/properties" sx={{ fontSize: '1.5rem', padding: '1rem 2rem' }}>
             View Government Contracts
           </Button>
         </Paper>

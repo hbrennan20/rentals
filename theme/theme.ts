@@ -17,7 +17,7 @@ const hslToHex = (h: number, s: number, l: number): string => {
 const theme = createTheme({
   palette: {
     primary: {
-      main: '##1f1f1f' // Updated primary color to ##1f1f1f
+      main: '##1b3135' // Updated primary color to ##1b3135
     },
     secondary: {
       main: hslToHex(210, 70, 40) // Updated secondary color

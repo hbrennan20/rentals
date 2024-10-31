@@ -141,7 +141,7 @@ export default function HistoricContracts() {
             width={80} // Adjust width to prevent cutoff
           />
           <Tooltip formatter={(value: any) => `${(Number(value) / 1000000).toFixed(1)}M`} />
-          <Bar dataKey="total" fill="#1f1f1f" />
+          <Bar dataKey="total" fill="#1b3135" />
         </BarChart>
       </div>
       <p className="text-sm text-gray-600">Was only able to get the first 1000 lines - took ages to load otherwise</p>

@@ -7,48 +7,46 @@ import { Public, Favorite, AttachMoney, People, Event, ArrowBack } from '@mui/ic
 import Link from 'next/link';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// Mock data (replace with actual data fetching in a real application)
-const contractData = {
-  name: "Global Green Initiative",
-  logo: "/path/to/logo.png",
-  mission: "Promoting environmental sustainability and combating climate change worldwide.",
-  founded: 2005,
-  location: "New York, NY",
-  website: "www.globalgreeninitiative.org",
-  causes: ["Environment", "Climate Change", "Sustainability"],
+// Updated mock data
+const propertyData = {
+  name: "Sunset Villa Apartments",
+  images: ["/path/to/property-image.jpg"],
+  description: "Luxury waterfront apartment complex with modern amenities and stunning views.",
+  yearBuilt: 2015,
+  location: "123 Ocean Drive, Miami, FL",
+  website: "www.sunsetvillaapartments.com",
+  amenities: ["Pool", "Fitness Center", "Covered Parking", "Pet Friendly"],
   financials: {
-    annualBudget: "$5,000,000",
-    programExpenses: "75%",
-    fundraisingExpenses: "15%",
-    administrativeExpenses: "10%",
+    monthlyRent: "$2,500",
+    securityDeposit: "$2,500",
+    maintenanceFee: "$100",
+    utilityEstimate: "$150",
   },
-  impact: {
-    treesPlanted: 1000000,
-    carbonOffset: "500,000 tons",
-    communitiesServed: 250,
+  stats: {
+    totalUnits: 150,
+    occupancyRate: "95%",
+    avgLeaseLength: "12 months",
   },
-  upcomingEvents: [
-    { name: "Earth Day Cleanup", date: "2024-04-22" },
-    { name: "Green Tech Symposium", date: "2024-06-15" },
+  availableUnits: [
+    { name: "2BR Deluxe", date: "2024-05-01" },
+    { name: "1BR Studio", date: "2024-04-15" },
   ],
   contactInfo: {
-    email: "info@globalgreeninitiative.org",
+    email: "leasing@sunsetvilla.com",
     phone: "+1 (555) 123-4567",
   },
 };
 
-const contractPage = () => {
+const PropertyPage = () => {
   const params = useParams();
   const router = useRouter();
-  const contractId = params.id;
+  const propertyId = params.id;
 
-  // In a real application, you would fetch the contract data here using the contractId
-
-  // Dummy financial data for the last 3 years
+  // Updated financial data for property performance
   const financialData = [
-    { year: '2021', 'Annual Budget': 4000000, 'Program Expenses': 3000000, 'Fundraising Expenses': 600000, 'Administrative Expenses': 400000 },
-    { year: '2022', 'Annual Budget': 4500000, 'Program Expenses': 3375000, 'Fundraising Expenses': 675000, 'Administrative Expenses': 450000 },
-    { year: '2023', 'Annual Budget': 5000000, 'Program Expenses': 3750000, 'Fundraising Expenses': 750000, 'Administrative Expenses': 500000 },
+    { year: '2021', 'Rental Income': 4000000, 'Operating Expenses': 1500000, 'Maintenance Costs': 500000, 'Net Income': 2000000 },
+    { year: '2022', 'Rental Income': 4500000, 'Operating Expenses': 1600000, 'Maintenance Costs': 600000, 'Net Income': 2300000 },
+    { year: '2023', 'Rental Income': 5000000, 'Operating Expenses': 1700000, 'Maintenance Costs': 700000, 'Net Income': 2600000 },
   ];
 
   return (
@@ -61,46 +59,46 @@ const contractPage = () => {
           <Link href="/" passHref style={{ textDecoration: 'none' }}>
             <Typography color="text.primary">Home</Typography>
           </Link>
-          <Link href="/contracts" passHref style={{ textDecoration: 'none' }}>
-            <Typography color="text.primary">Contracts</Typography>
+          <Link href="/properties" passHref style={{ textDecoration: 'none' }}>
+            <Typography color="text.primary">Properties</Typography>
           </Link>
-          <Typography color="text.secondary">{contractData.name}</Typography>
+          <Typography color="text.secondary">{propertyData.name}</Typography>
         </Breadcrumbs>
       </Box>
       <Paper sx={{ p: 3 }}>
         <Grid container spacing={3}>
-          {/* Header */}
+          {/* Header - updated */}
           <Grid item xs={12} display="flex" alignItems="center" gap={2}>
-            <Avatar src={contractData.logo} sx={{ width: 80, height: 80 }} />
+            <Avatar src={propertyData.images[0]} sx={{ width: 80, height: 80 }} />
             <Box>
-              <Typography variant="h4">{contractData.name}</Typography>
-              <Typography variant="subtitle1" color="text.secondary">{contractData.location}</Typography>
+              <Typography variant="h4">{propertyData.name}</Typography>
+              <Typography variant="subtitle1" color="text.secondary">{propertyData.location}</Typography>
             </Box>
           </Grid>
 
-          {/* Mission */}
+          {/* Description - renamed from Mission */}
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>Mission</Typography>
-            <Typography variant="body1">{contractData.mission}</Typography>
+            <Typography variant="h6" gutterBottom>Property Description</Typography>
+            <Typography variant="body1">{propertyData.description}</Typography>
           </Grid>
 
-          {/* Quick Facts */}
+          {/* Quick Facts - updated */}
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>Quick Facts</Typography>
             <List>
               <ListItem>
-                <ListItemText primary="Founded" secondary={contractData.founded} />
+                <ListItemText primary="Year Built" secondary={propertyData.yearBuilt} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Website" secondary={contractData.website} />
+                <ListItemText primary="Website" secondary={propertyData.website} />
               </ListItem>
               <ListItem>
                 <ListItemText 
-                  primary="Causes" 
+                  primary="Amenities" 
                   secondary={
                     <Box sx={{ mt: 1 }}>
-                      {contractData.causes.map((cause, index) => (
-                        <Chip key={index} label={cause} size="small" sx={{ mr: 1, mb: 1 }} />
+                      {propertyData.amenities.map((amenity, index) => (
+                        <Chip key={index} label={amenity} size="small" sx={{ mr: 1, mb: 1 }} />
                       ))}
                     </Box>
                   }
@@ -114,16 +112,16 @@ const contractPage = () => {
             <Typography variant="h6" gutterBottom>Financials</Typography>
             <List>
               <ListItem>
-                <ListItemText primary="Annual Budget" secondary={contractData.financials.annualBudget} />
+                <ListItemText primary="Monthly Rent" secondary={propertyData.financials.monthlyRent} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Program Expenses" secondary={contractData.financials.programExpenses} />
+                <ListItemText primary="Security Deposit" secondary={propertyData.financials.securityDeposit} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Fundraising Expenses" secondary={contractData.financials.fundraisingExpenses} />
+                <ListItemText primary="Maintenance Fee" secondary={propertyData.financials.maintenanceFee} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Administrative Expenses" secondary={contractData.financials.administrativeExpenses} />
+                <ListItemText primary="Utility Estimate" secondary={propertyData.financials.utilityEstimate} />
               </ListItem>
             </List>
           </Grid>
@@ -160,15 +158,15 @@ const contractPage = () => {
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>Upcoming Events</Typography>
             <List>
-              {contractData.upcomingEvents.map((event, index) => (
+              {propertyData.availableUnits.map((unit, index) => (
                 <React.Fragment key={index}>
                   <ListItem>
                     <ListItemText 
-                      primary={event.name}
-                      secondary={new Date(event.date).toLocaleDateString()}
+                      primary={unit.name}
+                      secondary={new Date(unit.date).toLocaleDateString()}
                     />
                   </ListItem>
-                  {index < contractData.upcomingEvents.length - 1 && <Divider />}
+                  {index < propertyData.availableUnits.length - 1 && <Divider />}
                 </React.Fragment>
               ))}
             </List>
@@ -179,10 +177,10 @@ const contractPage = () => {
             <Typography variant="h6" gutterBottom>Contact Information</Typography>
             <List>
               <ListItem>
-                <ListItemText primary="Email" secondary={contractData.contactInfo.email} />
+                <ListItemText primary="Email" secondary={propertyData.contactInfo.email} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Phone" secondary={contractData.contactInfo.phone} />
+                <ListItemText primary="Phone" secondary={propertyData.contactInfo.phone} />
               </ListItem>
             </List>
           </Grid>
@@ -212,10 +210,10 @@ const contractPage = () => {
                 labelFormatter={(label) => `Year: ${label}`}
               />
               <Legend />
-              <Bar dataKey="Annual Budget" fill="rgba(0, 0, 0, 0.8)" />
-              <Bar dataKey="Program Expenses" fill="rgba(64, 64, 64, 0.8)" />
-              <Bar dataKey="Fundraising Expenses" fill="rgba(128, 128, 128, 0.8)" />
-              <Bar dataKey="Administrative Expenses" fill="rgba(192, 192, 192, 0.8)" />
+              <Bar dataKey="Rental Income" fill="rgba(0, 0, 0, 0.8)" />
+              <Bar dataKey="Operating Expenses" fill="rgba(64, 64, 64, 0.8)" />
+              <Bar dataKey="Maintenance Costs" fill="rgba(128, 128, 128, 0.8)" />
+              <Bar dataKey="Net Income" fill="rgba(192, 192, 192, 0.8)" />
             </BarChart>
           </ResponsiveContainer>
         </Box>
@@ -224,4 +222,4 @@ const contractPage = () => {
   );
 };
 
-export default contractPage;
+export default PropertyPage;

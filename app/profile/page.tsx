@@ -61,7 +61,7 @@ async function ProfilePage() {
           <Avatar sx={{ width: 80, height: 80, mr: 3 }}>
             {userData.username?.[0] || authUser.email?.[0]}
           </Avatar>
-          <Typography variant="h4" color="#1f1f1f">Profile</Typography>
+          <Typography variant="h4" color="#1b3135">Profile</Typography>
         </Box>
         <Divider sx={{ mb: 3 }} />
         <Grid container spacing={2}>

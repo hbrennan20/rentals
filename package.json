@@ -38,6 +38,7 @@
     "google-auth-library": "^9.14.1",
     "googleapis": "^144.0.0",
     "highlight.js": "^11.10.0",
+    "ioredis": "^5.4.1",
     "langchain": "^0.1.9",
     "lucide-react": "^0.441.0",
     "mapbox-gl": "^3.6.0",

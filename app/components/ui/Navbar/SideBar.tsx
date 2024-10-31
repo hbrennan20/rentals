@@ -104,14 +104,10 @@ const SideBar: FC<SideBarProps> = ({ session }) => {
 
   const menuItems = [
     { text: 'Home', icon: <HomeIcon />, path: '/home' },
-    {
-      text: 'Contract Dashboard',
-      icon: <AttachMoneyIcon />,
-      path: '/properties'
-    },
     { text: 'Sales Pipeline', icon: <AssessmentIcon />, path: '/pipeline' },
-    { text: 'Contract Analysis', icon: <InsightsIcon />, path: '/properties/new' },
     { text: 'Historic Contracts', icon: <HistoryIcon />, path: '/historic_contracts' },
+    { text: 'Charts', icon: <AssessmentIcon />, path: '/graphs' },
+
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' }    
   ];
 

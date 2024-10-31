@@ -20,17 +20,39 @@ export default function ContractsPage() {
     const [output, setOutput] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const fetchUrlContent = async (url: string) => {
+        try {
+            const response = await fetch('/api/fetch-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url }),
+            });
+            const data = await response.json();
+            return data.content;
+        } catch (error) {
+            console.error('Error fetching URL:', error);
+            return null;
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
+            let urlContent = '';
+            if (url.trim()) {
+                urlContent = await fetchUrlContent(url.trim()) || '';
+            }
+
             const response = await fetch('/api/openai', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ 
-                    prompt: input,
+                    prompt: `${urlContent}\n\n${input}`,
                     url: url.trim()
                 }),
             });

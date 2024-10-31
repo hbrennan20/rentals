@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Grid, Paper, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import { Grid, Paper, Typography, Button } from '@mui/material';
 import Confetti from 'react-confetti';
 import initialData from '../data/pipeline-data.json';
 import axios from 'axios';
@@ -25,62 +25,43 @@ type PipelineData = {
 
 const SalesPipeline = () => {
     const [data, setData] = useState<PipelineData>(initialData);
-    const [openDialog, setOpenDialog] = useState(false);
     const [taskToMove, setTaskToMove] = useState(null);
     const [sourceStageId, setSourceStageId] = useState('');
     const [showConfetti, setShowConfetti] = useState(false);
 
     const handleMoveTask = async (task: any, sourceId: string, destinationId: string) => {
-        const destinationStage = data.stages[destinationId];
-        if (destinationStage) {
-            setTaskToMove(task);
-            setSourceStageId(sourceId);
-            
-            // Create new data object instead of modifying initialData
-            const updatedData = {
-                ...data,
-                stages: {
-                    ...data.stages,
-                    [sourceId]: {
-                        ...data.stages[sourceId],
-                        tasks: data.stages[sourceId].tasks.filter(t => t.id !== task.id)
-                    },
-                    [destinationId]: {
-                        ...data.stages[destinationId],
-                        tasks: [...data.stages[destinationId].tasks, task]
+        try {
+            const destinationStage = data.stages[destinationId];
+            if (destinationStage) {
+                setTaskToMove(task);
+                setSourceStageId(sourceId);
+                
+                const updatedData = {
+                    ...data,
+                    stages: {
+                        ...data.stages,
+                        [sourceId]: {
+                            ...data.stages[sourceId],
+                            tasks: data.stages[sourceId].tasks.filter(t => t.id !== task.id)
+                        },
+                        [destinationId]: {
+                            ...data.stages[destinationId],
+                            tasks: [...data.stages[destinationId].tasks, task]
+                        }
                     }
+                };
+
+                await updatePipelineData(updatedData);
+                setData(updatedData);
+                
+                if (destinationStage.title === 'Won') {
+                    setShowConfetti(true);
+                    setTimeout(() => setShowConfetti(false), 3000);
                 }
-            };
-
-            // Update state and send to server
-            setData(updatedData);
-            await updatePipelineData(updatedData);
-            
-            confirmMoveTask(destinationId);
+            }
+        } catch (error) {
+            console.error("Error moving task:", error);
         }
-    };
-
-    const confirmMoveTask = (destinationStageId: string) => {
-        const destinationStage = data.stages[destinationStageId];
-        const updatedTask = destinationStage.title === 'Won' || destinationStage.title === 'Lost'
-            ? { ...taskToMove, closedAt: new Date().toISOString() }
-            : taskToMove;
-
-        setData({
-            ...data,
-            stages: {
-                ...data.stages,
-                [sourceStageId]: { ...data.stages[sourceStageId], tasks: data.stages[sourceStageId].tasks.filter(t => t.id !== taskToMove.id) },
-                [destinationStageId]: { ...destinationStage, tasks: [...destinationStage.tasks, updatedTask] },
-            },
-        });
-
-        if (destinationStage.title === 'Won') {
-            setShowConfetti(true);
-            setTimeout(() => setShowConfetti(false), 3000);
-        }
-
-        setOpenDialog(false);
     };
 
     const formatCurrency = (value: number) => {
@@ -187,17 +168,6 @@ const SalesPipeline = () => {
                     );
                 })}
             </Grid>
-
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>Confirm Move</DialogTitle>
-                <DialogContent>
-                    <Typography>Are you sure you want to mark this deal as "Won"?</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary">Cancel</Button>
-                    <Button onClick={() => confirmMoveTask('stage-4')} color="primary">Confirm</Button>
-                </DialogActions>
-            </Dialog>
         </>
     );
 };

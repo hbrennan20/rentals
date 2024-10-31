@@ -5,30 +5,35 @@
       "title": "Leads",
       "tasks": [
         {
-          "id": "task-1",
-          "content": "123 Fake Street, Dublin City Centre Mixed-Use Development",
-          "value": 25000
-        },
-        {
-          "id": "task-2",
-          "content": "456 Imaginary Road, Dublin Commercial Office Building",
-          "value": 175000
-        },
-        {
           "id": "task-3",
           "content": "789 Fictional Avenue, Dublin Residential Apartment Complex",
           "value": 320000
+        },
+        {
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000
+        },
+        {
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000
+        },
+        {
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000
+        },
+        {
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000
         }
       ]
     },
     "stage-2": {
       "id": "stage-2",
       "title": "Qualified",
-      "tasks": []
-    },
-    "stage-3": {
-      "id": "stage-3",
-      "title": "Proposal",
       "tasks": [
         {
           "id": "task-6",
@@ -46,9 +51,25 @@
           "value": 89000
         },
         {
-          "id": "task-5",
-          "content": "202 Mythical Boulevard, Dublin Retail Shopping Center",
-          "value": 145000
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000
+        },
+        {
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000
+        }
+      ]
+    },
+    "stage-3": {
+      "id": "stage-3",
+      "title": "Proposal",
+      "tasks": [
+        {
+          "id": "task-2",
+          "content": "456 Imaginary Road, Dublin Commercial Office Building",
+          "value": 175000
         }
       ]
     },
@@ -57,17 +78,34 @@
       "title": "Won",
       "tasks": [
         {
-          "id": "task-4",
-          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
-          "value": 89000,
-          "closedAt": "2024-10-31T20:00:00.026Z"
+          "id": "task-5",
+          "content": "202 Mythical Boulevard, Dublin Retail Shopping Center",
+          "value": 145000
+        },
+        {
+          "id": "task-5",
+          "content": "202 Mythical Boulevard, Dublin Retail Shopping Center",
+          "value": 145000,
+          "closedAt": "2024-10-31T20:01:48.446Z"
         }
       ]
     },
     "stage-5": {
       "id": "stage-5",
       "title": "Lost",
-      "tasks": []
+      "tasks": [
+        {
+          "id": "task-1",
+          "content": "123 Fake Street, Dublin City Centre Mixed-Use Development",
+          "value": 25000
+        },
+        {
+          "id": "task-4",
+          "content": "101 Nonexistent Lane, Dublin Industrial Warehouse Facility",
+          "value": 89000,
+          "closedAt": "2024-10-31T20:00:00.026Z"
+        }
+      ]
     }
   },
   "stageOrder": [

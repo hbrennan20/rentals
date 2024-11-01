@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/theme/ThemeRegistry';
 import RootErrorBoundary from '@/app/components/errorBoundary/ErrorBoundaryPage';
 import Header from '@/app/components/ui/Header/Header';
+import Footer from '@/app/components/ui/Footer/Footer';
 import Box from '@mui/material/Box';
 
 import '@fontsource/inter';
@@ -62,6 +63,7 @@ export default async function RootLayout({
                 >
                   {children} {/* Remove the condition here */}
                 </Box>
+                <Footer />
               </Box>
             </Box>
           </RootErrorBoundary>

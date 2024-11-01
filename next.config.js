@@ -14,7 +14,6 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'source.unsplash.com' }],
-    domains: ['upxrdncrkyezptzfakwf.supabase.co', 'other-domain.com']
   },
   async rewrites() {
     return [

@@ -13,7 +13,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  IconButton
+  IconButton,
+  Checkbox
 } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download';
 import { 
@@ -72,6 +73,7 @@ export default function GraphsPage() {
   const [loading, setLoading] = useState(false);
   const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [selectedCounties, setSelectedCounties] = useState(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,24 +139,46 @@ export default function GraphsPage() {
     }, 3000);
   };
 
+  const handleCountySelect = (county) => {
+    setSelectedCounties(prev => {
+      const newSelection = new Set(prev);
+      if (newSelection.has(county)) {
+        newSelection.delete(county); // Deselect if already selected
+      } else {
+        newSelection.add(county); // Select if not selected
+      }
+      return newSelection;
+    });
+  };
+
+  const filteredData = data.map(yearData => {
+    const filteredYearData = { year: yearData.year };
+    Object.keys(yearData).forEach(county => {
+      if (selectedCounties.has(county)) {
+        filteredYearData[county] = yearData[county];
+      }
+    });
+    return filteredYearData;
+  }).filter(yearData => Object.keys(yearData).length > 1); // Filter out years with no selected counties
+
   const renderChart = () => {
     if (loading) {
       return <CircularProgress />;
     }
 
+    const counties = filteredData.length > 0 
+      ? Object.keys(filteredData[0]).filter(key => key !== 'year')
+      : [];
+
     switch (currentChart) {
       case 'line':
-        const counties = data.length > 0 
-          ? Object.keys(data[0]).filter(key => key !== 'year')
-          : [];
-
         return (
           <div className="p-4 rounded-lg shadow-md bg-white mb-4" style={{ width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
             <div className="flex flex-col w-full">
               <ResponsiveContainer width="100%" height={400} style={{ paddingRight: '20px' }}>
                 <LineChart 
-                  data={data}
+                  data={filteredData}
                   margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
@@ -195,7 +219,7 @@ export default function GraphsPage() {
             <h3 className="text-lg font-medium mb-4">Number of Sales Over Time</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data}>
+                <AreaChart data={filteredData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -212,7 +236,7 @@ export default function GraphsPage() {
             <h3 className="text-lg font-medium mb-4">Bar Chart</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
+                <BarChart data={filteredData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -248,10 +272,79 @@ export default function GraphsPage() {
   return (
     <div className="p-4 max-w-full md:max-w-4xl mx-auto md:pl-0">
       <h1 className="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
+
+      {/* Updated Table for Provinces and Counties */}
+      <div className="p-4 rounded-lg shadow-md bg-white mb-4">
+        <h3 className="text-lg font-medium mb-2">Provinces and Counties</h3>
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell><strong>Leinster</strong></TableCell>
+                <TableCell><strong>Munster</strong></TableCell>
+                <TableCell><strong>Connacht</strong></TableCell>
+                <TableCell><strong>Ulster</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  {['Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath'].map(county => (
+                    <div key={county}>
+                      <Checkbox 
+                        checked={selectedCounties.has(county)} 
+                        onChange={() => handleCountySelect(county)} 
+                        size="small"
+                      />
+                      {county}
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell>
+                  {['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford'].map(county => (
+                    <div key={county}>
+                      <Checkbox 
+                        checked={selectedCounties.has(county)} 
+                        onChange={() => handleCountySelect(county)} 
+                        size="small"
+                      />
+                      {county}
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell>
+                  {['Galway', 'Mayo', 'Roscommon', 'Sligo'].map(county => (
+                    <div key={county}>
+                      <Checkbox 
+                        checked={selectedCounties.has(county)} 
+                        onChange={() => handleCountySelect(county)} 
+                        size="small"
+                      />
+                      {county}
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell>
+                  {['Donegal', 'Cavan', 'Monaghan'].map(county => (
+                    <div key={county}>
+                      <Checkbox 
+                        checked={selectedCounties.has(county)} 
+                        onChange={() => handleCountySelect(county)} 
+                        size="small"
+                      />
+                      {county}
+                    </div>
+                  ))}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       {renderChart()}
 
       {/* Data Table */}
-      {!loading && data.length > 0 && (
+      {!loading && filteredData.length > 0 && (
         <div className="p-4 rounded-lg shadow-md bg-white mt-4 overflow-x-auto">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
@@ -261,7 +354,7 @@ export default function GraphsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell><strong>County</strong></TableCell>
-                  {data.map(yearData => (
+                  {filteredData.map(yearData => (
                     <TableCell key={yearData.year} align="right">
                       <strong>{yearData.year}</strong>
                     </TableCell>
@@ -269,25 +362,23 @@ export default function GraphsPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.keys(data[0])
-                  .filter(key => key !== 'year')
-                  .map((county, index) => (
-                    <TableRow 
-                      key={county}
-                      sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {county}
+                {Array.from(selectedCounties).map((county, index) => (
+                  <TableRow 
+                    key={county}
+                    sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {county}
+                    </TableCell>
+                    {filteredData.map(yearData => (
+                      <TableCell key={yearData.year} align="right">
+                        {yearData[county] 
+                          ? `€${yearData[county].toLocaleString()}`
+                          : '-'}
                       </TableCell>
-                      {data.map(yearData => (
-                        <TableCell key={yearData.year} align="right">
-                          {yearData[county] 
-                            ? `€${yearData[county].toLocaleString()}`
-                            : '-'}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                    ))}
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>

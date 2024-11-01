@@ -23,24 +23,10 @@ export default function Footer() {
         <Grid container spacing={4}>
           <Grid item xs={12} sm={4}>
             <Typography variant="h6" gutterBottom sx={{ color: '#fff' }}>
-              Property
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#fff' }}>
               Quick Links
             </Typography>
             <nav>
-              <Link href="/discover" passHref>
-                <Typography variant="body2" sx={{ mb: 1, display: 'block', color: '#fff' }}>
-                  Discover
-                </Typography>
-              </Link>
-              <Link href="/connect" passHref>
-                <Typography variant="body2" sx={{ mb: 1, display: 'block', color: '#fff' }}>
-                  Connect
-                </Typography>
-              </Link>
+
               <Link href="/contact" passHref>
                 <Typography variant="body2" sx={{ mb: 1, display: 'block', color: '#fff' }}>
                   Contact

@@ -433,7 +433,6 @@ export default function GraphsPage() {
       {!loading && filteredData.length > 0 && (
         <div className="p-4 rounded-lg shadow-md bg-white mt-4 overflow-x-auto">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
           </div>
           <TableContainer className="max-w-full">
             <Table size="small" className="min-w-full">

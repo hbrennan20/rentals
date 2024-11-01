@@ -64,6 +64,7 @@ const COUNTY_COLORS = {
   'Westmeath': 'rgba(128, 0, 0, 0.8)', // Less Faded Maroon
   'Wexford': 'rgba(128, 0, 128, 0.8)', // Less Faded Purple
   'Wicklow': 'rgba(0, 0, 255, 0.8)', // Less Faded Blue
+  'All': 'rgba(0, 50, 0, 0.8)', // Darker Green
 };
 
 const PROVINCE_COUNTIES = {
@@ -81,6 +82,7 @@ export default function GraphsPage() {
   const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [selectedCounties, setSelectedCounties] = useState(new Set(['Dublin', 'Cork']));
+  const [showAllCounty, setShowAllCounty] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,6 +109,10 @@ export default function GraphsPage() {
             const median = calculateMedian(data.prices);
             yearData[county] = median;
           });
+
+          const allPrices = Object.values(counties).flatMap(data => data.prices);
+          yearData['All'] = calculateMedian(allPrices);
+
           return yearData;
         });
 
@@ -175,7 +181,7 @@ export default function GraphsPage() {
   const filteredData = data.map(yearData => {
     const filteredYearData = { year: yearData.year };
     Object.keys(yearData).forEach(county => {
-      if (selectedCounties.has(county)) {
+      if (selectedCounties.has(county) || (county === 'All' && showAllCounty)) {
         filteredYearData[county] = yearData[county];
       }
     });
@@ -196,6 +202,14 @@ export default function GraphsPage() {
         return (
           <div className="p-4 rounded-lg shadow-md bg-white mb-4" style={{ width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
+            <div>
+              <Checkbox 
+                checked={showAllCounty} 
+                onChange={() => setShowAllCounty(prev => !prev)} 
+                size="small"
+              />
+              <span>Show Countrywide Median ('All')</span>
+            </div>
             <div className="flex flex-col w-full">
               <ResponsiveContainer width="100%" height={400} style={{ paddingRight: '20px' }}>
                 <LineChart 
@@ -210,13 +224,17 @@ export default function GraphsPage() {
                     style={{ textAlign: 'left' }} // Align left
                   />
                   <Tooltip 
-                    formatter={(value) => `€${value.toLocaleString()}`}
+                    formatter={(value, name) => {
+                      return name === 'All' 
+                        ? [`€${value.toLocaleString()}`, 'Countrywide Median'] 
+                        : [`€${value.toLocaleString()}`, name];
+                    }}
                     itemSorter={(item) => -item.value}
                     open={tooltipVisible}
                     onClick={handleTooltipClick}
                     contentStyle={{ maxHeight: '200px', overflowY: 'auto' }}
                   />
-                  {counties.map((county) => (
+                  {counties.map((county, index) => (
                     visibleLines[county] && (
                       <Line 
                         key={county}

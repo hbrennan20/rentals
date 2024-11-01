@@ -21,9 +21,9 @@ const globalStyles = `
 
 export const metadata = {
   metadataBase: new URL('http://localhost:3000/'),
-  title: "Rentals",
+  title: "Property",
   description:
-    'Rentals'
+    'Property'
 };
 
 export default async function RootLayout({

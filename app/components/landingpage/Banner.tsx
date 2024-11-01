@@ -30,7 +30,7 @@ const BannerComponent: React.FC<BannerComponentProps> = ({ session, userEmail })
                 color: '#000000',
               }}
             >
-              Rentals
+              Property
             </Typography>
             <Typography
               variant="h5"
@@ -42,7 +42,7 @@ const BannerComponent: React.FC<BannerComponentProps> = ({ session, userEmail })
                 fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
               }}
             >
-              Rentals
+              Property
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, mb: 5 }}>
               <Link href="/auth/signup" passHref>

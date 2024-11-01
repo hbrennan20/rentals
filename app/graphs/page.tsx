@@ -9,8 +9,14 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton
 } from '@mui/material'
+import DownloadIcon from '@mui/icons-material/Download';
 import { 
   AreaChart, 
   Area, 
@@ -28,36 +34,36 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const COUNTY_COLORS = {
-  'Carlow': '#FF0000', // Red and Green
-  'Cavan': '#0000FF', // Royal Blue and Grey
-  'Clare': '#FFD700', // Yellow and Blue
-  'Cork': '#FF0000', // Red and Grey
-  'Derry': '#FF0000', // Red and Grey
-  'Donegal': '#FFD700', // Yellow and Green
-  'Down': '#FF0000', // Red and Black
-  'Dublin': '#0000FF', // Navy Blue and Sky Blue
-  'Fermanagh': '#008000', // Green and Grey
-  'Galway': '#800000', // Maroon and Grey
-  'Kerry': '#008000', // Green and Gold
-  'Kildare': '#808080', // Grey and Red
-  'Kilkenny': '#000000', // Black and Amber
-  'Laois': '#0000FF', // Blue and Grey
-  'Leitrim': '#008000', // Green and Gold
-  'Limerick': '#008000', // Green and Grey
-  'Longford': '#0000FF', // Blue and Gold
-  'Louth': '#FF0000', // Red and Grey
-  'Mayo': '#008000', // Green and Red
-  'Meath': '#008000', // Green and Gold
-  'Monaghan': '#808080', // Grey and Blue
-  'Offaly': '#008000', // Green, Grey and Gold
-  'Roscommon': '#FFD700', // Yellow and Blue
-  'Sligo': '#000000', // Black and Grey
-  'Tipperary': '#0000FF', // Blue and Gold
-  'Tyrone': '#808080', // Grey and Red
-  'Waterford': '#0000FF', // Blue and Grey
-  'Westmeath': '#800000', // Maroon and Grey
-  'Wexford': '#800080', // Purple and Gold
-  'Wicklow': '#0000FF', // Blue and Gold
+  'Carlow': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Cavan': 'rgba(0, 0, 255, 0.5)', // Faded Royal Blue
+  'Clare': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Cork': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Derry': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Donegal': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Down': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Dublin': 'rgba(0, 0, 255, 0.5)', // Faded Navy Blue
+  'Fermanagh': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Galway': 'rgba(128, 0, 0, 0.5)', // Faded Maroon
+  'Kerry': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Kildare': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Kilkenny': 'rgba(0, 0, 0, 0.5)', // Faded Black
+  'Laois': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Leitrim': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Limerick': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Longford': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Louth': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Mayo': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Meath': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Monaghan': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Offaly': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Roscommon': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Sligo': 'rgba(0, 0, 0, 0.5)', // Faded Black
+  'Tipperary': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Tyrone': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Waterford': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Westmeath': 'rgba(128, 0, 0, 0.5)', // Faded Maroon
+  'Wexford': 'rgba(128, 0, 128, 0.5)', // Faded Purple
+  'Wicklow': 'rgba(0, 0, 255, 0.5)', // Faded Blue
 };
 
 export default function GraphsPage() {
@@ -65,6 +71,7 @@ export default function GraphsPage() {
   const [visibleLines, setVisibleLines] = useState({});
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,10 +142,10 @@ export default function GraphsPage() {
           : [];
 
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <Paper elevation={2} sx={{ p: 3, height: '600px', overflow: 'auto' }}>
             <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
-            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex' }}>
-              <ResponsiveContainer width="85%" height="100%">
+            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
+              <ResponsiveContainer width="100%" height={300}>
                 <LineChart 
                   data={data}
                   margin={{ right: 30 }}
@@ -167,7 +174,7 @@ export default function GraphsPage() {
                   ))}
                 </LineChart>
               </ResponsiveContainer>
-              <div style={{ width: '15%', overflowY: 'auto', paddingLeft: '10px' }}>
+              <div style={{ width: '100%', overflowY: 'auto', paddingLeft: '10px' }}>
                 {counties.map((county) => (
                   <div
                     key={county}
@@ -266,15 +273,15 @@ export default function GraphsPage() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+    <div className="p-4 md:p-8">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
       
       {/* Navigation Buttons */}
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col md:flex-row">
         <Button variant="contained" onClick={() => setCurrentChart('line')}>Line Chart</Button>
-        <Button variant="contained" onClick={() => setCurrentChart('area')} className="ml-2">Area Chart</Button>
-        <Button variant="contained" onClick={() => setCurrentChart('bar')} className="ml-2">Bar Chart</Button>
-        <Button variant="contained" onClick={() => setCurrentChart('county')} className="ml-2">County Median House Prices</Button>
+        <Button variant="contained" onClick={() => setCurrentChart('area')} className="mt-2 md:mt-0 md:ml-2">Area Chart</Button>
+        <Button variant="contained" onClick={() => setCurrentChart('bar')} className="mt-2 md:mt-0 md:ml-2">Bar Chart</Button>
+        <Button variant="contained" onClick={() => setCurrentChart('county')} className="mt-2 md:mt-0 md:ml-2">County Median House Prices</Button>
       </div>
 
       {/* Chart Section */}
@@ -282,8 +289,10 @@ export default function GraphsPage() {
 
       {/* Data Table */}
       {!loading && data.length > 0 && (
-        <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
-          <h3 className="text-lg font-medium mb-4">Median House Prices by County and Year</h3>
+        <Paper elevation={2} sx={{ p: 2, mt: 4 }}>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
+          </div>
           <TableContainer>
             <Table size="small">
               <TableHead>
@@ -299,8 +308,11 @@ export default function GraphsPage() {
               <TableBody>
                 {Object.keys(data[0])
                   .filter(key => key !== 'year')
-                  .map(county => (
-                    <TableRow key={county}>
+                  .map((county, index) => (
+                    <TableRow 
+                      key={county}
+                      sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
+                    >
                       <TableCell component="th" scope="row">
                         {county}
                       </TableCell>
@@ -316,8 +328,50 @@ export default function GraphsPage() {
               </TableBody>
             </Table>
           </TableContainer>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+            <IconButton 
+              onClick={() => setOpenCoffeeDialog(true)}
+              color="primary"
+              title="Support Us"
+              sx={{ 
+                backgroundColor: '#1976d2', // Primary color
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: '#115293', // Darker shade on hover
+                },
+                borderRadius: '4px',
+                padding: '8px',
+              }}
+            >
+              <DownloadIcon />
+            </IconButton>
+          </div>
         </Paper>
       )}
+
+      <Dialog
+        open={openCoffeeDialog}
+        onClose={() => setOpenCoffeeDialog(false)}
+      >
+        <DialogTitle>Support Us</DialogTitle>
+        <DialogContent style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px' }}>
+          <div style={{ textAlign: 'center', color: '#1976d2', fontSize: '1.2rem' }}>
+            ☕️ If you enjoy our service, consider buying us a coffee! 
+            <br />
+            <a 
+              href="https://www.buymeacoffee.com/yourusername" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{ color: '#ffcc00', fontWeight: 'bold', textDecoration: 'underline' }}
+            >
+              Buy Me a Coffee
+            </a>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCoffeeDialog(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

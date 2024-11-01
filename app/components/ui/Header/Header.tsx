@@ -54,7 +54,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
               textAlign: 'left'
             }}
           >
-            Rentals
+            Property
           </Typography>
         </a>
         {isSessionAvailable ? (

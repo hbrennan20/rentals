@@ -22,7 +22,7 @@ export default function Footer() {
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#fff' }}>
+            <Typography variant="h4" gutterBottom sx={{ color: '#fff', fontWeight: 'bold' }}>
               Quick Links
             </Typography>
             <nav>
@@ -35,7 +35,7 @@ export default function Footer() {
             </nav>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#fff' }}>
+            <Typography variant="h4" gutterBottom sx={{ color: '#fff', fontWeight: 'bold' }}>
               Support Us
             </Typography>
             <Box>

@@ -2,7 +2,6 @@
 import React, { type ReactNode } from 'react';
 import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/theme/ThemeRegistry';
-import RootErrorBoundary from '@/app/components/errorBoundary/ErrorBoundaryPage';
 import Header from '@/app/components/ui/Header/Header';
 import Footer from '@/app/components/ui/Footer/Footer';
 import Box from '@mui/material/Box';
@@ -37,7 +36,6 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeRegistry>
-          <RootErrorBoundary>
             <Box sx={{ display: 'flex', minHeight: '100vh' }}>
               <Box
                 sx={{
@@ -66,7 +64,6 @@ export default async function RootLayout({
                 <Footer />
               </Box>
             </Box>
-          </RootErrorBoundary>
         </ThemeRegistry>
       </body>
     </html>

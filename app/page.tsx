@@ -480,7 +480,6 @@ export default function GraphsPage() {
           </div>
         </div>
       )}
-
       {/* Dialog */}
       <Dialog
         open={openCoffeeDialog}
@@ -490,24 +489,24 @@ export default function GraphsPage() {
       >
         <DialogTitle>Support Us</DialogTitle>
         <DialogContent style={{ backgroundColor: '#1b3034', padding: '20px', borderRadius: '8px' }}>
-          <div style={{ textAlign: 'center', color: '#1976d2', fontSize: '1.2rem' }}>
+          <div style={{ textAlign: 'center', color: 'white', fontSize: '1.2rem' }}>
             ☕️ If you enjoy our service, consider buying us a coffee! 
             <br />
             <a 
               href="https://www.buymeacoffee.com/yourusername" 
               target="_blank" 
               rel="noopener noreferrer" 
-              style={{ color: '#ffcc00', fontWeight: 'bold', textDecoration: 'underline' }}
+              style={{ color: '#ffffff', fontWeight: 'bold', textDecoration: 'underline' }}
             >
               Buy Me a Coffee
             </a>
           </div>
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-4" style={{ fontSize: '1.5rem' }}>
             <Button 
               onClick={handleDownload}
               variant="contained"
               color="primary"
-              style={{ backgroundColor: '#1b3034', color: '#ffffff' }}
+              style={{ backgroundColor: '#1b3034', color: '#ffffff', padding: '12px 24px', margin: '0 auto' }}
             >
               Download Data
             </Button>

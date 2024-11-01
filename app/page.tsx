@@ -68,9 +68,9 @@ const COUNTY_COLORS = {
 };
 
 const PROVINCE_COUNTIES = {
-  Leinster: ['Dublin','Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath','Offaly'],
+  Leinster: ['Dublin','Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath','Offaly','Carlow'],
   Munster: ['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford'],
-  Connacht: ['Galway', 'Mayo', 'Roscommon', 'Sligo'],
+  Connacht: ['Galway', 'Mayo', 'Roscommon', 'Sligo', 'Leitrim'],
   Ulster: ['Donegal', 'Cavan', 'Monaghan'],
 };
 

@@ -106,12 +106,10 @@ export default function GraphsPage() {
         const processedData = Object.entries(groupedData).map(([year, counties]) => {
           const yearData = { year: parseInt(year) };
           Object.entries(counties).forEach(([county, data]) => {
-            const median = calculateMedian(data.prices);
-            yearData[county] = median;
+            yearData[county] = data.prices[Math.floor(data.prices.length / 2)];
           });
 
-          const allPrices = Object.values(counties).flatMap(data => data.prices);
-          yearData['All'] = calculateMedian(allPrices);
+          yearData['All'] = counties['All'] ? counties['All'].prices : [];
 
           return yearData;
         });
@@ -136,14 +134,6 @@ export default function GraphsPage() {
       setVisibleLines(initialVisibility);
     }
   }, [data]);
-
-  const calculateMedian = (prices) => {
-    const sorted = prices.sort((a, b) => a - b);
-    const middle = Math.floor(sorted.length / 2);
-    return sorted.length % 2 === 0
-      ? (sorted[middle - 1] + sorted[middle]) / 2
-      : sorted[middle];
-  };
 
   const handleTooltipClick = () => {
     setTooltipVisible(true);

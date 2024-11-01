@@ -438,7 +438,11 @@ export default function GraphsPage() {
               <Table size="small" className="min-w-full">
                 <TableHead>
                   <TableRow>
-                    <TableCell style={{ minWidth: '100px' }}><strong>County</strong></TableCell>
+                    <TableCell 
+                      style={{ minWidth: '100px', position: 'sticky', left: 0, backgroundColor: '#f5f5f5', zIndex: 10 }}
+                    >
+                      <strong>County</strong>
+                    </TableCell>
                     {filteredData.map(yearData => (
                       <TableCell 
                         key={yearData.year} 
@@ -459,7 +463,8 @@ export default function GraphsPage() {
                       <TableCell 
                         component="th" 
                         scope="row"
-                        style={{ minWidth: '100px' }}
+                        style={{ minWidth: '100px', position: 'sticky', left: 0, backgroundColor: '#f5f5f5', zIndex: 10 }}
+                        className="sticky left-0 bg-white z-10"
                       >
                         {county}
                       </TableCell>

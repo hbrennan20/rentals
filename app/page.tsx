@@ -503,19 +503,23 @@ export default function GraphsPage() {
         <DialogTitle>Support Us</DialogTitle>
         <DialogContent style={{ backgroundColor: '#1b3034', padding: '40px 20px 20px', borderRadius: '8px', textAlign: 'center' }}>
           <div style={{ color: 'white', fontSize: '1.2rem' }}>
-            ☕️ If you enjoy our service, consider buying us a coffee! 
+            If you enjoy our service, consider giving us feedback to improve the site! 
             <br />
+            
+            <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+              We appreciate your support!
+            </div>
             <a 
-              href="https://www.buymeacoffee.com/yourusername" 
+              href="https://forms.gle/wQcFq1HDvGrZRYiE9" 
               target="_blank" 
               rel="noopener noreferrer" 
               style={{ color: '#ffffff', fontWeight: 'bold', textDecoration: 'underline' }}
             >
-              Buy Me a Coffee
+              Feedback form
             </a>
           </div>
           <div style={{ fontSize: '1.5rem', marginTop: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Button 
                 onClick={handleDownload}
                 variant="contained"

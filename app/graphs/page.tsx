@@ -72,6 +72,8 @@ export default function GraphsPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
+  const [touchTimer, setTouchTimer] = useState(null);
+  const [lastTap, setLastTap] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,10 +132,14 @@ export default function GraphsPage() {
       : sorted[middle];
   };
 
+  const isMobile = window.innerWidth < 768; // Adjust the breakpoint as needed
+
   const renderChart = () => {
     if (loading) {
       return <CircularProgress />;
     }
+
+    const chartContainerStyle = isMobile ? { width: '100%', height: '100%' } : { p: 3, height: '600px' };
 
     switch (currentChart) {
       case 'line':
@@ -142,9 +148,10 @@ export default function GraphsPage() {
           : [];
 
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px', overflow: 'auto' }}>
+          <div style={chartContainerStyle}>
             <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
-            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
+            <h4 className="text-md font-medium mb-2">Legend</h4>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column', padding: '0 10px' }}>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart 
                   data={data}
@@ -174,51 +181,49 @@ export default function GraphsPage() {
                   ))}
                 </LineChart>
               </ResponsiveContainer>
-              <div style={{ width: '100%', overflowY: 'auto', paddingLeft: '10px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                 {counties.map((county) => (
-                  <div
-                    key={county}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: '8px',
-                      cursor: 'pointer',
-                      opacity: visibleLines[county] ? 1 : 0.5,
-                    }}
-                    onClick={() => {
-                      setVisibleLines(prev => ({
-                        ...prev,
-                        [county]: !prev[county]
-                      }));
-                    }}
-                    onDoubleClick={() => {
-                      const allFalse = Object.fromEntries(
-                        counties.map(c => [c, false])
-                      );
-                      setVisibleLines({
-                        ...allFalse,
-                        [county]: true
-                      });
-                    }}
-                  >
+                  visibleLines[county] && (
                     <div
+                      key={county}
                       style={{
-                        width: '12px',
-                        height: '12px',
-                        backgroundColor: COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`,
-                        marginRight: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginBottom: '8px',
+                        cursor: 'pointer',
+                        opacity: visibleLines[county] ? 1 : 0.5,
+                        width: '23%', // Adjusted width for 4 columns
                       }}
-                    />
-                    <span style={{ fontSize: '0.875rem' }}>{county}</span>
-                  </div>
+                      onClick={() => {
+                        setVisibleLines(prev => ({
+                          ...prev,
+                          [county]: !prev[county]
+                        }));
+                      }}
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleTouchStart(county);
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`,
+                          marginRight: '8px',
+                        }}
+                      />
+                      <span style={{ fontSize: '0.875rem' }}>{county}</span>
+                    </div>
+                  )
                 ))}
               </div>
             </div>
-          </Paper>
+          </div>
         );
       case 'area':
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <div style={chartContainerStyle}>
             <h3 className="text-lg font-medium mb-4">Number of Sales Over Time</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -231,11 +236,11 @@ export default function GraphsPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </Paper>
+          </div>
         );
       case 'bar':
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <div style={chartContainerStyle}>
             <h3 className="text-lg font-medium mb-4">Bar Chart</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -248,11 +253,11 @@ export default function GraphsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </Paper>
+          </div>
         );
       case 'county':
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <div style={chartContainerStyle}>
             <h3 className="text-lg font-medium mb-4">County Median House Prices</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -265,10 +270,38 @@ export default function GraphsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </Paper>
+          </div>
         );
       default:
         return null;
+    }
+  };
+
+  const handleLongPress = (county) => {
+    const allFalse = Object.fromEntries(
+      Object.keys(visibleLines).map(c => [c, false])
+    );
+    setVisibleLines({
+      ...allFalse,
+      [county]: true
+    });
+  };
+
+  const handleTouchStart = (county) => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300; // milliseconds
+    
+    if (lastTap && (now - lastTap) < DOUBLE_TAP_DELAY) {
+      // Double tap detected
+      handleLongPress(county);
+      setLastTap(0);
+    } else {
+      setLastTap(now);
+      // Single tap handling
+      setVisibleLines(prev => ({
+        ...prev,
+        [county]: !prev[county]
+      }));
     }
   };
 
@@ -276,23 +309,13 @@ export default function GraphsPage() {
     <div className="p-4 md:p-8">
       <h1 className="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
       
-      {/* Navigation Buttons */}
-      <div className="mb-4 flex flex-col md:flex-row">
-        <Button variant="contained" onClick={() => setCurrentChart('line')}>Line Chart</Button>
-        <Button variant="contained" onClick={() => setCurrentChart('area')} className="mt-2 md:mt-0 md:ml-2">Area Chart</Button>
-        <Button variant="contained" onClick={() => setCurrentChart('bar')} className="mt-2 md:mt-0 md:ml-2">Bar Chart</Button>
-        <Button variant="contained" onClick={() => setCurrentChart('county')} className="mt-2 md:mt-0 md:ml-2">County Median House Prices</Button>
-      </div>
-
       {/* Chart Section */}
       {renderChart()}
 
       {/* Data Table */}
       {!loading && data.length > 0 && (
-        <Paper elevation={2} sx={{ p: 2, mt: 4 }}>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
-          </div>
+        <div style={{ marginTop: '16px' }}>
+          <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
           <TableContainer>
             <Table size="small">
               <TableHead>
@@ -346,7 +369,7 @@ export default function GraphsPage() {
               <DownloadIcon />
             </IconButton>
           </div>
-        </Paper>
+        </div>
       )}
 
       <Dialog

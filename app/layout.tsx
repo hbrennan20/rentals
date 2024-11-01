@@ -19,7 +19,7 @@ const globalStyles = `
 
 export const metadata = {
   metadataBase: new URL('http://localhost:3000/'),
-  title: "Property",
+  title: "Irish Property",
   description:
     'Property'
 };

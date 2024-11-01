@@ -45,16 +45,15 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
       <Toolbar sx={{ justifyContent: 'space-between', paddingLeft: '10px' }}>
         <a href="/" style={{ textDecoration: 'none' }}>
           <Typography
-            variant="h2"
+            variant="h5" // Changed from h3 to h4 for an even smaller size
             sx={{
               color: 'white',
               fontWeight: 'bold',
-              padding: '8px 16px',
               borderRadius: '4px',
               textAlign: 'left'
             }}
           >
-            Property
+            Irish Property
           </Typography>
         </a>
       </Toolbar>

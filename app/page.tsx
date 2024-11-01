@@ -38,32 +38,39 @@ const COUNTY_COLORS = {
   'Cavan': 'rgba(0, 0, 255, 0.5)', // Faded Royal Blue
   'Clare': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
   'Cork': 'rgba(255, 0, 0, 0.5)', // Faded Red
-  'Derry': 'rgba(255, 0, 0, 0.5)', // Faded Red
-  'Donegal': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Derry': 'rgba(255, 0, 0, 1)', // Less Faded Red
+  'Donegal': 'rgba(255, 215, 0, 40)', // Less Faded Yellow
   'Down': 'rgba(255, 0, 0, 0.5)', // Faded Red
   'Dublin': 'rgba(0, 0, 255, 0.5)', // Faded Navy Blue
-  'Fermanagh': 'rgba(0, 128, 0, 0.5)', // Faded Green
-  'Galway': 'rgba(128, 0, 0, 0.5)', // Faded Maroon
-  'Kerry': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Fermanagh': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
+  'Galway': 'rgba(128, 0, 0, 0.8)', // Less Faded Maroon
+  'Kerry': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
   'Kildare': 'rgba(128, 128, 128, 0.5)', // Faded Grey
   'Kilkenny': 'rgba(0, 0, 0, 0.5)', // Faded Black
-  'Laois': 'rgba(0, 0, 255, 0.5)', // Faded Blue
-  'Leitrim': 'rgba(0, 128, 0, 0.5)', // Faded Green
-  'Limerick': 'rgba(0, 128, 0, 0.5)', // Faded Green
-  'Longford': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Laois': 'rgba(0, 0, 255, 0.8)', // Less Faded Blue
+  'Leitrim': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
+  'Limerick': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
+  'Longford': 'rgba(0, 0, 255, 0.8)', // Less Faded Blue
   'Louth': 'rgba(255, 0, 0, 0.5)', // Faded Red
-  'Mayo': 'rgba(0, 128, 0, 0.5)', // Faded Green
-  'Meath': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Mayo': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
+  'Meath': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
   'Monaghan': 'rgba(128, 128, 128, 0.5)', // Faded Grey
-  'Offaly': 'rgba(0, 128, 0, 0.5)', // Faded Green
-  'Roscommon': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Offaly': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
+  'Roscommon': 'rgba(255, 215, 0, 0.8)', // Less Faded Yellow
   'Sligo': 'rgba(0, 0, 0, 0.5)', // Faded Black
-  'Tipperary': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Tipperary': 'rgba(0, 0, 255, 0.8)', // Less Faded Blue
   'Tyrone': 'rgba(128, 128, 128, 0.5)', // Faded Grey
-  'Waterford': 'rgba(0, 0, 255, 0.5)', // Faded Blue
-  'Westmeath': 'rgba(128, 0, 0, 0.5)', // Faded Maroon
-  'Wexford': 'rgba(128, 0, 128, 0.5)', // Faded Purple
-  'Wicklow': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Waterford': 'rgba(0, 0, 255, 0.8)', // Less Faded Blue
+  'Westmeath': 'rgba(128, 0, 0, 0.8)', // Less Faded Maroon
+  'Wexford': 'rgba(128, 0, 128, 0.8)', // Less Faded Purple
+  'Wicklow': 'rgba(0, 0, 255, 0.8)', // Less Faded Blue
+};
+
+const PROVINCE_COUNTIES = {
+  Leinster: ['Dublin','Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath'],
+  Munster: ['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford'],
+  Connacht: ['Galway', 'Mayo', 'Roscommon', 'Sligo'],
+  Ulster: ['Donegal', 'Cavan', 'Monaghan'],
 };
 
 export default function GraphsPage() {
@@ -73,7 +80,7 @@ export default function GraphsPage() {
   const [loading, setLoading] = useState(false);
   const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [selectedCounties, setSelectedCounties] = useState(new Set());
+  const [selectedCounties, setSelectedCounties] = useState(new Set(['Dublin', 'Cork']));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,6 +154,22 @@ export default function GraphsPage() {
       } else {
         newSelection.add(county); // Select if not selected
       }
+      return newSelection;
+    });
+  };
+
+  const handleProvinceSelect = (province) => {
+    const counties = PROVINCE_COUNTIES[province];
+    setSelectedCounties(prev => {
+      const newSelection = new Set(prev);
+      const allSelected = counties.every(county => newSelection.has(county));
+      counties.forEach(county => {
+        if (allSelected) {
+          newSelection.delete(county); // Deselect all if already selected
+        } else {
+          newSelection.add(county); // Select all if not selected
+        }
+      });
       return newSelection;
     });
   };
@@ -269,6 +292,30 @@ export default function GraphsPage() {
     }
   };
 
+  const handleDownload = () => {
+    const csvRows = [];
+    const headers = ['County', ...data.map(yearData => yearData.year)];
+    csvRows.push(headers.join(',')); // Add headers
+
+    Array.from(selectedCounties).forEach(county => {
+      const row = [county];
+      data.forEach(yearData => {
+        row.push(yearData[county] ? (yearData[county] / 1000).toFixed(0) : '-'); // Format values
+      });
+      csvRows.push(row.join(',')); // Add row to CSV
+    });
+
+    const csvString = csvRows.join('\n'); // Join rows with newline
+    const blob = new Blob([csvString], { type: 'text/csv' }); // Create a blob for CSV
+    const url = URL.createObjectURL(blob); // Create a URL for the blob
+    const a = document.createElement('a'); // Create an anchor element
+    a.href = url; // Set the URL as the href
+    a.download = 'data.csv'; // Set the download filename
+    document.body.appendChild(a); // Append to the body
+    a.click(); // Trigger the download
+    document.body.removeChild(a); // Remove the anchor from the document
+  };
+
   return (
     <div className="p-4 max-w-full md:max-w-4xl mx-auto md:pl-0">
       <div className="p-4 rounded-lg shadow-md bg-white mb-4">
@@ -278,11 +325,17 @@ export default function GraphsPage() {
             <TableBody>
               {/* Provinces */}
               <TableRow>
-                <TableCell><strong>Leinster</strong></TableCell>
                 <TableCell>
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    {['Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath'].map(county => (
-                      <div key={county} style={{ marginRight: '10px' }}>
+                  <Checkbox 
+                    onChange={() => handleProvinceSelect('Leinster')} 
+                    size="small"
+                  />
+                  <strong>Leinster</strong>
+                </TableCell>
+                <TableCell>
+                  <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                    {PROVINCE_COUNTIES.Leinster.map(county => (
+                      <div key={county} style={{ display: 'inline-block', marginRight: '10px' }}>
                         <Checkbox 
                           checked={selectedCounties.has(county)} 
                           onChange={() => handleCountySelect(county)} 
@@ -295,11 +348,17 @@ export default function GraphsPage() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell><strong>Munster</strong></TableCell>
                 <TableCell>
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    {['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford'].map(county => (
-                      <div key={county} style={{ marginRight: '10px' }}>
+                  <Checkbox 
+                    onChange={() => handleProvinceSelect('Munster')} 
+                    size="small"
+                  />
+                  <strong>Munster</strong>
+                </TableCell>
+                <TableCell>
+                  <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                    {PROVINCE_COUNTIES.Munster.map(county => (
+                      <div key={county} style={{ display: 'inline-block', marginRight: '10px' }}>
                         <Checkbox 
                           checked={selectedCounties.has(county)} 
                           onChange={() => handleCountySelect(county)} 
@@ -312,11 +371,17 @@ export default function GraphsPage() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell><strong>Connacht</strong></TableCell>
                 <TableCell>
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    {['Galway', 'Mayo', 'Roscommon', 'Sligo'].map(county => (
-                      <div key={county} style={{ marginRight: '10px' }}>
+                  <Checkbox 
+                    onChange={() => handleProvinceSelect('Connacht')} 
+                    size="small"
+                  />
+                  <strong>Connacht</strong>
+                </TableCell>
+                <TableCell>
+                  <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                    {PROVINCE_COUNTIES.Connacht.map(county => (
+                      <div key={county} style={{ display: 'inline-block', marginRight: '10px' }}>
                         <Checkbox 
                           checked={selectedCounties.has(county)} 
                           onChange={() => handleCountySelect(county)} 
@@ -329,11 +394,17 @@ export default function GraphsPage() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell><strong>Ulster</strong></TableCell>
                 <TableCell>
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    {['Donegal', 'Cavan', 'Monaghan'].map(county => (
-                      <div key={county} style={{ marginRight: '10px' }}>
+                  <Checkbox 
+                    onChange={() => handleProvinceSelect('Ulster')} 
+                    size="small"
+                  />
+                  <strong>Ulster</strong>
+                </TableCell>
+                <TableCell>
+                  <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                    {PROVINCE_COUNTIES.Ulster.map(county => (
+                      <div key={county} style={{ display: 'inline-block', marginRight: '10px' }}>
                         <Checkbox 
                           checked={selectedCounties.has(county)} 
                           onChange={() => handleCountySelect(county)} 
@@ -381,7 +452,7 @@ export default function GraphsPage() {
                     {filteredData.map(yearData => (
                       <TableCell key={yearData.year} align="right">
                         {yearData[county] 
-                          ? `€${yearData[county].toLocaleString()}`
+                          ? `€${(yearData[county] / 1000).toFixed(0)}k`
                           : '-'}
                       </TableCell>
                     ))}
@@ -396,7 +467,7 @@ export default function GraphsPage() {
               color="primary"
               title="Support Us"
               className="rounded"
-              style={{ backgroundColor: '#1b3034', color: '#ffffff' }}
+              style={{ backgroundColor: '#1b3034', color: '#ffffff', marginRight: '10px' }}
             >
               <DownloadIcon />
             </IconButton>
@@ -424,6 +495,16 @@ export default function GraphsPage() {
             >
               Buy Me a Coffee
             </a>
+          </div>
+          <div className="flex justify-center mt-4">
+            <Button 
+              onClick={handleDownload}
+              variant="contained"
+              color="primary"
+              style={{ backgroundColor: '#1b3034', color: '#ffffff' }}
+            >
+              Download Data
+            </Button>
           </div>
         </DialogContent>
         <DialogActions>

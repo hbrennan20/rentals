@@ -430,68 +430,70 @@ export default function GraphsPage() {
       {renderChart()}
 
       {/* Data Table */}
-      {!loading && filteredData.length > 0 && (
-        <div className="p-4 rounded-lg shadow-md bg-white mt-4 overflow-x-auto">
-          <div className="flex justify-between items-center mb-2">
-          </div>
-          <TableContainer className="max-w-full">
-            <Table size="small" className="min-w-full">
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ minWidth: '100px' }}><strong>County</strong></TableCell>
-                  {filteredData.map(yearData => (
-                    <TableCell 
-                      key={yearData.year} 
-                      align="right"
-                      style={{ minWidth: '80px' }}
-                    >
-                      <strong>{yearData.year}</strong>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Array.from(selectedCounties).map((county, index) => (
-                  <TableRow 
-                    key={county}
-                    sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
-                  >
-                    <TableCell 
-                      component="th" 
-                      scope="row"
-                      style={{ minWidth: '100px' }}
-                    >
-                      {county}
-                    </TableCell>
+      <div style={{ marginTop: '20px' }}>
+        {!loading && filteredData.length > 0 && (
+          <div className="p-4 rounded-lg shadow-md bg-lightgrey mt-4 overflow-x-auto">
+            <div className="flex justify-between items-center mb-2">
+            </div>
+            <TableContainer className="max-w-full">
+              <Table size="small" className="min-w-full">
+                <TableHead>
+                  <TableRow>
+                    <TableCell style={{ minWidth: '100px' }}><strong>County</strong></TableCell>
                     {filteredData.map(yearData => (
                       <TableCell 
                         key={yearData.year} 
                         align="right"
                         style={{ minWidth: '80px' }}
                       >
-                        {yearData[county] 
-                          ? `€${(yearData[county] / 1000).toFixed(0)}k`
-                          : '-'}
+                        <strong>{yearData.year}</strong>
                       </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <div className="flex justify-end mt-4">
-            <IconButton 
-              onClick={() => setOpenCoffeeDialog(true)}
-              color="primary"
-              title="Support Us"
-              className="rounded"
-              style={{ backgroundColor: '#1b3034', color: '#ffffff', marginRight: '10px' }}
-            >
-              <DownloadIcon />
-            </IconButton>
+                </TableHead>
+                <TableBody>
+                  {Array.from(selectedCounties).map((county, index) => (
+                    <TableRow 
+                      key={county}
+                      sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
+                    >
+                      <TableCell 
+                        component="th" 
+                        scope="row"
+                        style={{ minWidth: '100px' }}
+                      >
+                        {county}
+                      </TableCell>
+                      {filteredData.map(yearData => (
+                        <TableCell 
+                          key={yearData.year} 
+                          align="right"
+                          style={{ minWidth: '80px' }}
+                        >
+                          {yearData[county] 
+                            ? `€${(yearData[county] / 1000).toFixed(0)}k`
+                            : '-'}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <div className="flex justify-end mt-4">
+              <IconButton 
+                onClick={() => setOpenCoffeeDialog(true)}
+                color="primary"
+                title="Support Us"
+                className="rounded"
+                style={{ backgroundColor: '#1b3034', color: '#ffffff', marginRight: '10px' }}
+              >
+                <DownloadIcon />
+              </IconButton>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       {/* Dialog */}
       <Dialog
         open={openCoffeeDialog}

@@ -19,11 +19,13 @@ import {
     FormControl,
     InputLabel,
     Grid,
-    Button
+    Button,
+    CircularProgress
 } from '@mui/material';
 
 const HistoricContracts = () => {
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -42,8 +44,40 @@ const HistoricContracts = () => {
         'Meath', 'Monaghan', 'Offaly', 'Roscommon', 'Sligo', 'Tipperary',
         'Tyrone', 'Waterford', 'Westmeath', 'Wexford', 'Wicklow'
     ]);
+    const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'ascending' });
+
+    const sortedData = [...data].sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+    });
+
+    const requestSort = (key: string) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+        
+        // Sort the original data instead of sortedData
+        const sorted = [...data].sort((a, b) => {
+            if (a[key] < b[key]) {
+                return direction === 'ascending' ? -1 : 1;
+            }
+            if (a[key] > b[key]) {
+                return direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
+        setData(sorted); // Update the data state with sorted data
+    };
 
     const fetchData = async () => {
+        setLoading(true);
         try {
             const queryParams = new URLSearchParams({
                 page: page.toString(),
@@ -61,6 +95,8 @@ const HistoricContracts = () => {
             setTotalPages(Math.ceil(response.data.total / limit));
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -83,6 +119,7 @@ const HistoricContracts = () => {
 
     return (
         <div>
+            {loading && <CircularProgress />}
             <Typography variant="h4" gutterBottom>
                 Historic Contracts
             </Typography>
@@ -159,14 +196,14 @@ const HistoricContracts = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Address</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Price</TableCell>
-                            <TableCell>County</TableCell>
+                            <TableCell onClick={() => requestSort('address')}>Address</TableCell>
+                            <TableCell onClick={() => requestSort('date')}>Date</TableCell>
+                            <TableCell onClick={() => requestSort('price')}>Price</TableCell>
+                            <TableCell onClick={() => requestSort('county')}>County</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.map((contract, index) => (
+                        {sortedData.map((contract, index) => (
                             <TableRow key={index}>
                                 <TableCell>{contract.address}</TableCell>
                                 <TableCell>{new Date(contract.date).toLocaleDateString()}</TableCell>

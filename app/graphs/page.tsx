@@ -34,6 +34,36 @@ const metrics = [
   { title: 'Conversion Rate', value: '3.8%', change: '-0.4%' },
 ]
 
+const countyData = [
+  { county: 'County A', medianPrice: 350000 },
+  { county: 'County B', medianPrice: 450000 },
+  { county: 'County C', medianPrice: 550000 },
+  { county: 'County D', medianPrice: 600000 },
+  { county: 'County E', medianPrice: 700000 },
+  { county: 'County F', medianPrice: 750000 },
+  { county: 'County G', medianPrice: 800000 },
+  { county: 'County H', medianPrice: 850000 },
+  { county: 'County I', medianPrice: 900000 },
+  { county: 'County J', medianPrice: 950000 },
+  { county: 'County K', medianPrice: 1000000 },
+  { county: 'County L', medianPrice: 1100000 },
+  { county: 'County M', medianPrice: 1200000 },
+  { county: 'County N', medianPrice: 1300000 },
+  { county: 'County O', medianPrice: 1400000 },
+  { county: 'County P', medianPrice: 1500000 },
+  { county: 'County Q', medianPrice: 1600000 },
+  { county: 'County R', medianPrice: 1700000 },
+  { county: 'County S', medianPrice: 1800000 },
+  { county: 'County T', medianPrice: 1900000 },
+  { county: 'County U', medianPrice: 2000000 },
+  { county: 'County V', medianPrice: 2100000 },
+  { county: 'County W', medianPrice: 2200000 },
+  { county: 'County X', medianPrice: 2300000 },
+  { county: 'County Y', medianPrice: 2400000 },
+  { county: 'County Z', medianPrice: 2500000 },
+  // ... add more counties as needed ...
+];
+
 export default function GraphsPage() {
   const [currentChart, setCurrentChart] = useState('line');
 
@@ -90,6 +120,23 @@ export default function GraphsPage() {
             </div>
           </Paper>
         );
+      case 'county':
+        return (
+          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+            <h3 className="text-lg font-medium mb-4">County Median House Prices</h3>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={countyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="county" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="medianPrice" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Paper>
+        );
       default:
         return null;
     }
@@ -104,6 +151,7 @@ export default function GraphsPage() {
         <Button variant="contained" onClick={() => setCurrentChart('line')}>Line Chart</Button>
         <Button variant="contained" onClick={() => setCurrentChart('area')} className="ml-2">Area Chart</Button>
         <Button variant="contained" onClick={() => setCurrentChart('bar')} className="ml-2">Bar Chart</Button>
+        <Button variant="contained" onClick={() => setCurrentChart('county')} className="ml-2">County Median House Prices</Button>
       </div>
 
       {/* Chart Section */}

@@ -33,6 +33,12 @@ interface FilterParams {
   dateTo?: string;
 }
 
+// Add new interface for sorting parameters
+interface SortParams {
+  sortBy?: keyof PropertyRecord; // Assuming PropertyRecord keys are sortable
+  sortOrder?: 'asc' | 'desc';
+}
+
 async function loadDataIntoCache() {
   const cacheKey = 'property_records';
   
@@ -78,7 +84,7 @@ async function loadDataIntoCache() {
         .on('error', reject);
     });
   } catch (error) {
-    console.error('Error in loadDataIntoCache:', error);
+    console.error('Errors in loadDataIntoCache:', error);
     throw error;
   }
 }
@@ -98,6 +104,12 @@ export async function GET(request: NextRequest) {
       dateTo: searchParams.get('dateTo') || undefined,
     };
 
+    // Get sorting parameters
+    const sortParams: SortParams = {
+      sortBy: searchParams.get('sortBy') as keyof PropertyRecord || undefined,
+      sortOrder: searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc',
+    };
+
     const data = await loadDataIntoCache();
     
     // Apply filters
@@ -110,6 +122,20 @@ export async function GET(request: NextRequest) {
       if (filters.dateTo) matches = matches && new Date(record.date) <= new Date(filters.dateTo);
       return matches;
     });
+
+    // Apply sorting
+    if (sortParams.sortBy) {
+      filteredData.sort((a, b) => {
+        const aValue = a[sortParams.sortBy];
+        const bValue = b[sortParams.sortBy];
+
+        if (sortParams.sortOrder === 'asc') {
+          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+        } else {
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+        }
+      });
+    }
 
     const startIndex = (page - 1) * limit;
     const paginatedResults = filteredData.slice(startIndex, startIndex + limit);

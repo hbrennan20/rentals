@@ -27,8 +27,8 @@ export default function Footer() {
             </Typography>
             <nav>
 
-              <Link href="/contact" passHref>
-                <Typography variant="body2" sx={{ mb: 1, display: 'block', color: '#fff' }}>
+              <Link href="https://forms.gle/wQcFq1HDvGrZRYiE9" passHref>
+                <Typography variant="body1" sx={{ mb: 1, display: 'block', color: '#fff' }}>
                   Contact
                 </Typography>
               </Link>

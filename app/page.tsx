@@ -54,7 +54,7 @@ const COUNTY_COLORS = {
   'Louth': 'rgba(255, 0, 0, 0.5)', // Faded Red
   'Mayo': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
   'Meath': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
-  'Monaghan': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Monaghan': 'rgba(0, 0, 139, 0.8)', // Dark Blue
   'Offaly': 'rgba(0, 128, 0, 0.8)', // Less Faded Green
   'Roscommon': 'rgba(255, 215, 0, 0.8)', // Less Faded Yellow
   'Sligo': 'rgba(0, 0, 0, 0.5)', // Faded Black
@@ -162,14 +162,13 @@ export default function GraphsPage() {
     const counties = PROVINCE_COUNTIES[province];
     setSelectedCounties(prev => {
       const newSelection = new Set(prev);
-      counties.forEach(county => {
-        if (newSelection.has(county)) {
-          newSelection.delete(county); // Deselect if already selected
-        } else {
-          newSelection.add(county); // Select if not selected
-        }
-      });
-      return newSelection; // Return the updated selection
+      const allSelected = counties.every(county => newSelection.has(county));
+      if (allSelected) {
+        counties.forEach(county => newSelection.delete(county));
+      } else {
+        counties.forEach(county => newSelection.add(county));
+      }
+      return newSelection;
     });
   };
 
@@ -502,7 +501,7 @@ export default function GraphsPage() {
         fullWidth
       >
         <DialogTitle>Support Us</DialogTitle>
-        <DialogContent style={{ backgroundColor: '#1b3034', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
+        <DialogContent style={{ backgroundColor: '#1b3034', padding: '40px 20px 20px', borderRadius: '8px', textAlign: 'center' }}>
           <div style={{ color: 'white', fontSize: '1.2rem' }}>
             ☕️ If you enjoy our service, consider buying us a coffee! 
             <br />
@@ -516,13 +515,15 @@ export default function GraphsPage() {
             </a>
           </div>
           <div style={{ fontSize: '1.5rem', marginTop: '20px' }}>
-            <Button 
-              onClick={handleDownload}
-              variant="contained"
-              style={{ backgroundColor: '#ffffff', color: '#000000', padding: '12px 24px' }}
-            >
-              Download Data
-            </Button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button 
+                onClick={handleDownload}
+                variant="contained"
+                style={{ backgroundColor: '#ffffff', color: '#000000', padding: '12px 24px' }}
+              >
+                Download Data
+              </Button>
+            </div>
           </div>
         </DialogContent>
         <DialogActions>

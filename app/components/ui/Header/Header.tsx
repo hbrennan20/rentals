@@ -45,7 +45,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
       <Toolbar sx={{ justifyContent: 'space-between', paddingLeft: '10px' }}>
         <a href="/" style={{ textDecoration: 'none' }}>
           <Typography
-            variant="h5" // Changed from h3 to h4 for an even smaller size
+            variant="h2" // Changed from h3 to h4 for an even smaller size
             sx={{
               color: 'white',
               fontWeight: 'bold',
@@ -53,7 +53,7 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
               textAlign: 'left'
             }}
           >
-            Irish Property
+            Irish Property Prices
           </Typography>
         </a>
       </Toolbar>

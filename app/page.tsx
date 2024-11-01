@@ -152,7 +152,7 @@ export default function GraphsPage() {
           <div className="p-4 rounded-lg shadow-md bg-white mb-4" style={{ width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
             <div className="flex flex-col w-full">
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer width="100%" height={400} style={{ paddingRight: '20px' }}>
                 <LineChart 
                   data={data}
                   margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
@@ -186,40 +186,6 @@ export default function GraphsPage() {
                   ))}
                 </LineChart>
               </ResponsiveContainer>
-              <div className="mt-4 grid grid-cols-4 gap-2 max-h-40 overflow-y-auto">
-                {counties.map((county) => (
-                  <div
-                    key={county}
-                    className="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer"
-                    style={{
-                      opacity: visibleLines[county] ? 1 : 0.5,
-                    }}
-                    onClick={() => {
-                      setVisibleLines(prev => ({
-                        ...prev,
-                        [county]: !prev[county]
-                      }));
-                    }}
-                    onDoubleClick={() => {
-                      const allFalse = Object.fromEntries(
-                        counties.map(c => [c, false])
-                      );
-                      setVisibleLines({
-                        ...allFalse,
-                        [county]: true
-                      });
-                    }}
-                  >
-                    <div
-                      className="w-3 h-3 mr-2 rounded-full"
-                      style={{
-                        backgroundColor: COUNTY_COLORS[county] || `hsl(${(counties.indexOf(county) * 360) / counties.length}, 70%, 50%)`,
-                      }}
-                    />
-                    <span className="text-sm truncate">{county}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         );

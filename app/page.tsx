@@ -271,70 +271,78 @@ export default function GraphsPage() {
 
   return (
     <div className="p-4 max-w-full md:max-w-4xl mx-auto md:pl-0">
-      <h1 className="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
-
-      {/* Updated Table for Provinces and Counties */}
       <div className="p-4 rounded-lg shadow-md bg-white mb-4">
-        <h3 className="text-lg font-medium mb-2">Provinces and Counties</h3>
+        <h3 className="text-sm font-medium mb-2">Provinces and Counties</h3>
         <TableContainer>
           <Table size="small">
-            <TableHead>
+            <TableBody>
+              {/* Provinces */}
               <TableRow>
                 <TableCell><strong>Leinster</strong></TableCell>
-                <TableCell><strong>Munster</strong></TableCell>
-                <TableCell><strong>Connacht</strong></TableCell>
-                <TableCell><strong>Ulster</strong></TableCell>
+                <TableCell>
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {['Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath'].map(county => (
+                      <div key={county} style={{ marginRight: '10px' }}>
+                        <Checkbox 
+                          checked={selectedCounties.has(county)} 
+                          onChange={() => handleCountySelect(county)} 
+                          size="small"
+                        />
+                        {county}
+                      </div>
+                    ))}
+                  </div>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
               <TableRow>
+                <TableCell><strong>Munster</strong></TableCell>
                 <TableCell>
-                  {['Wicklow', 'Kildare', 'Kilkenny', 'Laois', 'Longford', 'Louth', 'Meath', 'Wexford', 'Westmeath'].map(county => (
-                    <div key={county}>
-                      <Checkbox 
-                        checked={selectedCounties.has(county)} 
-                        onChange={() => handleCountySelect(county)} 
-                        size="small"
-                      />
-                      {county}
-                    </div>
-                  ))}
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford'].map(county => (
+                      <div key={county} style={{ marginRight: '10px' }}>
+                        <Checkbox 
+                          checked={selectedCounties.has(county)} 
+                          onChange={() => handleCountySelect(county)} 
+                          size="small"
+                        />
+                        {county}
+                      </div>
+                    ))}
+                  </div>
                 </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell><strong>Connacht</strong></TableCell>
                 <TableCell>
-                  {['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford'].map(county => (
-                    <div key={county}>
-                      <Checkbox 
-                        checked={selectedCounties.has(county)} 
-                        onChange={() => handleCountySelect(county)} 
-                        size="small"
-                      />
-                      {county}
-                    </div>
-                  ))}
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {['Galway', 'Mayo', 'Roscommon', 'Sligo'].map(county => (
+                      <div key={county} style={{ marginRight: '10px' }}>
+                        <Checkbox 
+                          checked={selectedCounties.has(county)} 
+                          onChange={() => handleCountySelect(county)} 
+                          size="small"
+                        />
+                        {county}
+                      </div>
+                    ))}
+                  </div>
                 </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell><strong>Ulster</strong></TableCell>
                 <TableCell>
-                  {['Galway', 'Mayo', 'Roscommon', 'Sligo'].map(county => (
-                    <div key={county}>
-                      <Checkbox 
-                        checked={selectedCounties.has(county)} 
-                        onChange={() => handleCountySelect(county)} 
-                        size="small"
-                      />
-                      {county}
-                    </div>
-                  ))}
-                </TableCell>
-                <TableCell>
-                  {['Donegal', 'Cavan', 'Monaghan'].map(county => (
-                    <div key={county}>
-                      <Checkbox 
-                        checked={selectedCounties.has(county)} 
-                        onChange={() => handleCountySelect(county)} 
-                        size="small"
-                      />
-                      {county}
-                    </div>
-                  ))}
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {['Donegal', 'Cavan', 'Monaghan'].map(county => (
+                      <div key={county} style={{ marginRight: '10px' }}>
+                        <Checkbox 
+                          checked={selectedCounties.has(county)} 
+                          onChange={() => handleCountySelect(county)} 
+                          size="small"
+                        />
+                        {county}
+                      </div>
+                    ))}
+                  </div>
                 </TableCell>
               </TableRow>
             </TableBody>

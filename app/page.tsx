@@ -162,15 +162,14 @@ export default function GraphsPage() {
     const counties = PROVINCE_COUNTIES[province];
     setSelectedCounties(prev => {
       const newSelection = new Set(prev);
-      const allSelected = counties.every(county => newSelection.has(county));
       counties.forEach(county => {
-        if (allSelected) {
-          newSelection.delete(county); // Deselect all if already selected
+        if (newSelection.has(county)) {
+          newSelection.delete(county); // Deselect if already selected
         } else {
-          newSelection.add(county); // Select all if not selected
+          newSelection.add(county); // Select if not selected
         }
       });
-      return newSelection;
+      return newSelection; // Return the updated selection
     });
   };
 
@@ -327,6 +326,8 @@ export default function GraphsPage() {
               <TableRow>
                 <TableCell>
                   <Checkbox 
+                    checked={PROVINCE_COUNTIES.Leinster.every(county => selectedCounties.has(county))} // Check if all counties are selected
+                    indeterminate={PROVINCE_COUNTIES.Leinster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Leinster.every(county => selectedCounties.has(county))} // Check if some but not all are selected
                     onChange={() => handleProvinceSelect('Leinster')} 
                     size="small"
                   />
@@ -350,6 +351,8 @@ export default function GraphsPage() {
               <TableRow>
                 <TableCell>
                   <Checkbox 
+                    checked={PROVINCE_COUNTIES.Munster.every(county => selectedCounties.has(county))} // Check if all counties are selected
+                    indeterminate={PROVINCE_COUNTIES.Munster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Munster.every(county => selectedCounties.has(county))} // Check if some but not all are selected
                     onChange={() => handleProvinceSelect('Munster')} 
                     size="small"
                   />
@@ -373,6 +376,8 @@ export default function GraphsPage() {
               <TableRow>
                 <TableCell>
                   <Checkbox 
+                    checked={PROVINCE_COUNTIES.Connacht.every(county => selectedCounties.has(county))} // Check if all counties are selected
+                    indeterminate={PROVINCE_COUNTIES.Connacht.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Connacht.every(county => selectedCounties.has(county))} // Check if some but not all are selected
                     onChange={() => handleProvinceSelect('Connacht')} 
                     size="small"
                   />
@@ -396,6 +401,8 @@ export default function GraphsPage() {
               <TableRow>
                 <TableCell>
                   <Checkbox 
+                    checked={PROVINCE_COUNTIES.Ulster.every(county => selectedCounties.has(county))} // Check if all counties are selected
+                    indeterminate={PROVINCE_COUNTIES.Ulster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Ulster.every(county => selectedCounties.has(county))} // Check if some but not all are selected
                     onChange={() => handleProvinceSelect('Ulster')} 
                     size="small"
                   />

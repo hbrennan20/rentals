@@ -5,6 +5,7 @@ import ThemeRegistry from '@/theme/ThemeRegistry';
 import Header from '@/app/components/ui/Header/Header';
 import Footer from '@/app/components/ui/Footer/Footer';
 import Box from '@mui/material/Box';
+import { Analytics } from "@vercel/analytics/react";
 
 import '@fontsource/inter';
 
@@ -64,6 +65,7 @@ export default async function RootLayout({
                 <Footer />
               </Box>
             </Box>
+            <Analytics />
         </ThemeRegistry>
       </body>
     </html>

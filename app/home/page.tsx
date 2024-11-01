@@ -1,231 +1,368 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  Container,
-  Grid,
-  Card,
-  CardContent,
+import { 
   Paper,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import {
-  AttachMoney,
-  Group,
-  TrendingUp,
-  CalendarToday,
-  Link as LinkIcon
-} from '@mui/icons-material';
-import Link from 'next/link'; // Add this import
-import { createClient } from '@/lib/client/client';
+  Button,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton
+} from '@mui/material'
+import DownloadIcon from '@mui/icons-material/Download';
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+} from 'recharts'
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const HomePage = () => {
-  const router = useRouter();
-  const [paymentLinks, setPaymentLinks] = useState<Array<{ id: number; url: string; createdAt: string }>>([]);
-  const [userId, setUserId] = useState<string | null>(null);
-  const supabase = createClient();
-
-  // Mock data for metrics (replace with actual data fetching logic)
-  const metrics = {
-    totalUsers: 25,
-    activeUsers: 12,
-    nextPayout: '2024-10-15',
-    payoutAmount: 15000
-  };
-
-  // Function to fetch payment links (replace with actual API call)
-  const fetchPaymentLinks = async () => {
-    if (!userId) return;
-
-    try {
-      const { data: chefData, error: chefError } = await supabase
-        .from('chefs')
-        .select('payment_links')
-        .eq('user_id', userId)
-        .single();
-
-      if (chefError) {
-        console.error('Error fetching chef data:', chefError);
-        return;
-      }
-
-      console.log('Fetched chef data:', chefData);
-
-      if (chefData && chefData.payment_links) {
-        // Check if payment_links is an array
-        const links = Array.isArray(chefData.payment_links) 
-          ? chefData.payment_links.map((url, index) => ({
-              id: index + 1,
-              url,
-              createdAt: new Date().toISOString()
-            }))
-          : [];
-        console.log('Processed payment links:', links);
-        setPaymentLinks(links);
-      } else {
-        console.log('No payment links found in chef data');
-        setPaymentLinks([]); // Ensure empty array is set
-      }
-    } catch (error) {
-      console.error('Error fetching payment links:', error);
-      setPaymentLinks([]); // Ensure empty array is set on error
-    }
-  };
-
-  useEffect(() => {
-    const fetchUserId = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) {
-        console.error('Error fetching user data:', error);
-      } else if (user) {
-        setUserId(user.id);
-      }
-    };
-
-    fetchUserId();
-  }, [supabase.auth]);
-
-  useEffect(() => {
-    if (userId) {
-      fetchPaymentLinks();
-    }
-  }, [userId]);
-
-  // Add this console.log for debugging
-  console.log('Current paymentLinks state:', paymentLinks);
-
-  return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: '#f4f6f7'  // Changed from '#979fd1'
-      }}
-    >
-      <Container
-        maxWidth={false}
-        sx={{ flexGrow: 1, py: 6, px: { xs: 4, sm: 6, md: 8 } }}
-      >
-        <Paper
-          elevation={3}
-          sx={{ p: 4, mb: 6, borderRadius: 2, bgcolor: '#ffffff' }}
-        >
-          <Typography
-            variant="h2"
-            component="h1"
-            gutterBottom
-            fontWeight="bold"
-            align="center"
-          >
-            Your Dashboard
-          </Typography>
-          <Typography
-            variant="h5"
-            paragraph
-            color="text.secondary"
-            align="center"
-          >
-            Track revenue, expenses, and key metrics with ease. Get started with
-            your personalized dashboard today!
-          </Typography>
-        </Paper>
-
-        {/* Metrics Cards */}
-        <Grid container spacing={4} sx={{ mb: 6 }}>
-          {[
-            {
-              icon: <Group fontSize="large" />,
-              label: 'Total Contracts',
-              value: metrics.totalUsers,
-              link: '/users'
-            },
-            {
-              icon: <TrendingUp fontSize="large" />,
-              label: 'Active Contracts',
-              value: metrics.activeUsers,
-              link: '/users'
-            },
-            {
-              icon: <CalendarToday fontSize="large" />,
-              label: 'Next Payout Date',
-              value: metrics.nextPayout,
-              link: '/finance_dashboard'
-            },
-            {
-              icon: <AttachMoney fontSize="large" />,
-              label: 'Next Payout Amount',
-              value: `$${metrics.payoutAmount}`,
-              link: '/finance_dashboard'
-            }
-          ].map((item, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card
-                elevation={3}
-                sx={{
-                  height: '100%',
-                  borderRadius: 2,
-                  transition: 'transform 0.3s',
-                  '&:hover': { transform: 'scale(1.05)' },
-                  cursor: item.link ? 'pointer' : 'default'
-                }}
-                onClick={() => item.link && router.push(item.link)}
-              >
-                <CardContent
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%'
-                  }}
-                >
-                  {item.icon}
-                  <Typography
-                    color="text.secondary"
-                    gutterBottom
-                    sx={{ mt: 2 }}
-                  >
-                    {item.label}
-                  </Typography>
-                  <Typography variant="h4" component="div" fontWeight="bold">
-                    {item.value}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-
-      </Container>
-      
-
-      {/* New Section for Call to Action */}
-      <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 2, bgcolor: '#ffffff', textAlign: 'center' }}>
-          <Button variant="contained" color="primary" href="/properties" sx={{ fontSize: '1.5rem', padding: '1rem 2rem' }}>
-            View Government Contracts
-          </Button>
-        </Paper>
-      </Container>
-
-      {/* Footer Section */}
-      <Box sx={{ bgcolor: '#f4f6f7', py: 3, textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          © {new Date().getFullYear()} Your Company Name. All rights reserved.
-        </Typography>
-      </Box>
-    </Box>
-    
-  );
+const COUNTY_COLORS = {
+  'Carlow': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Cavan': 'rgba(0, 0, 255, 0.5)', // Faded Royal Blue
+  'Clare': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Cork': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Derry': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Donegal': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Down': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Dublin': 'rgba(0, 0, 255, 0.5)', // Faded Navy Blue
+  'Fermanagh': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Galway': 'rgba(128, 0, 0, 0.5)', // Faded Maroon
+  'Kerry': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Kildare': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Kilkenny': 'rgba(0, 0, 0, 0.5)', // Faded Black
+  'Laois': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Leitrim': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Limerick': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Longford': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Louth': 'rgba(255, 0, 0, 0.5)', // Faded Red
+  'Mayo': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Meath': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Monaghan': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Offaly': 'rgba(0, 128, 0, 0.5)', // Faded Green
+  'Roscommon': 'rgba(255, 215, 0, 0.5)', // Faded Yellow
+  'Sligo': 'rgba(0, 0, 0, 0.5)', // Faded Black
+  'Tipperary': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Tyrone': 'rgba(128, 128, 128, 0.5)', // Faded Grey
+  'Waterford': 'rgba(0, 0, 255, 0.5)', // Faded Blue
+  'Westmeath': 'rgba(128, 0, 0, 0.5)', // Faded Maroon
+  'Wexford': 'rgba(128, 0, 128, 0.5)', // Faded Purple
+  'Wicklow': 'rgba(0, 0, 255, 0.5)', // Faded Blue
 };
 
-export default HomePage;
+export default function GraphsPage() {
+  const [currentChart, setCurrentChart] = useState('line');
+  const [visibleLines, setVisibleLines] = useState({});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('/api/contracts');
+        const groupedData = response.data.data.reduce((acc, record) => {
+          const year = new Date(record.date).getFullYear();
+          if (!acc[year]) acc[year] = {};
+          if (!acc[year][record.county]) {
+            acc[year][record.county] = {
+              prices: [],
+              count: 0
+            };
+          }
+          acc[year][record.county].prices.push(record.price);
+          acc[year][record.county].count++;
+          return acc;
+        }, {});
+
+        const processedData = Object.entries(groupedData).map(([year, counties]) => {
+          const yearData = { year: parseInt(year) };
+          Object.entries(counties).forEach(([county, data]) => {
+            const median = calculateMedian(data.prices);
+            yearData[county] = median;
+          });
+          return yearData;
+        });
+
+        setData(processedData.sort((a, b) => a.year - b.year));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      const counties = Object.keys(data[0]).filter(key => key !== 'year');
+      const initialVisibility = counties.reduce((acc, county) => {
+        acc[county] = true;
+        return acc;
+      }, {});
+      setVisibleLines(initialVisibility);
+    }
+  }, [data]);
+
+  const calculateMedian = (prices) => {
+    const sorted = prices.sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+      ? (sorted[middle - 1] + sorted[middle]) / 2
+      : sorted[middle];
+  };
+
+  const renderChart = () => {
+    if (loading) {
+      return <CircularProgress />;
+    }
+
+    switch (currentChart) {
+      case 'line':
+        const counties = data.length > 0 
+          ? Object.keys(data[0]).filter(key => key !== 'year')
+          : [];
+
+        return (
+          <Paper elevation={2} sx={{ p: 3, height: '600px', overflow: 'auto' }}>
+            <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart 
+                  data={data}
+                  margin={{ right: 30 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis 
+                    tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value) => `€${value.toLocaleString()}`}
+                    itemSorter={(item) => -item.value}
+                  />
+                  {counties.map((county) => (
+                    visibleLines[county] && (
+                      <Line 
+                        key={county}
+                        type="monotone" 
+                        dataKey={county}
+                        name={county}
+                        stroke={COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`}
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    )
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+              <div style={{ width: '100%', overflowY: 'auto', paddingLeft: '10px' }}>
+                {counties.map((county) => (
+                  <div
+                    key={county}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginBottom: '8px',
+                      cursor: 'pointer',
+                      opacity: visibleLines[county] ? 1 : 0.5,
+                    }}
+                    onClick={() => {
+                      setVisibleLines(prev => ({
+                        ...prev,
+                        [county]: !prev[county]
+                      }));
+                    }}
+                    onDoubleClick={() => {
+                      const allFalse = Object.fromEntries(
+                        counties.map(c => [c, false])
+                      );
+                      setVisibleLines({
+                        ...allFalse,
+                        [county]: true
+                      });
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        backgroundColor: COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`,
+                        marginRight: '8px',
+                      }}
+                    />
+                    <span style={{ fontSize: '0.875rem' }}>{county}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Paper>
+        );
+      case 'area':
+        return (
+          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+            <h3 className="text-lg font-medium mb-4">Number of Sales Over Time</h3>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="count" fill="#82ca9d" stroke="#82ca9d" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </Paper>
+        );
+      case 'bar':
+        return (
+          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+            <h3 className="text-lg font-medium mb-4">Bar Chart</h3>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="revenue" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Paper>
+        );
+      case 'county':
+        return (
+          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+            <h3 className="text-lg font-medium mb-4">County Median House Prices</h3>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={countyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="county" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="medianPrice" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Paper>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="p-4 md:p-8">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
+      {/* Chart Section */}
+      {renderChart()}
+
+      {/* Data Table */}
+      {!loading && data.length > 0 && (
+        <Paper elevation={2} sx={{ p: 2, mt: 4 }}>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
+          </div>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell><strong>County</strong></TableCell>
+                  {data.map(yearData => (
+                    <TableCell key={yearData.year} align="right">
+                      <strong>{yearData.year}</strong>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.keys(data[0])
+                  .filter(key => key !== 'year')
+                  .map((county, index) => (
+                    <TableRow 
+                      key={county}
+                      sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {county}
+                      </TableCell>
+                      {data.map(yearData => (
+                        <TableCell key={yearData.year} align="right">
+                          {yearData[county] 
+                            ? `€${yearData[county].toLocaleString()}`
+                            : '-'}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+            <IconButton 
+              onClick={() => setOpenCoffeeDialog(true)}
+              color="primary"
+              title="Support Us"
+              sx={{ 
+                backgroundColor: '#1976d2', // Primary color
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: '#115293', // Darker shade on hover
+                },
+                borderRadius: '4px',
+                padding: '8px',
+              }}
+            >
+              <DownloadIcon />
+            </IconButton>
+          </div>
+        </Paper>
+      )}
+
+      <Dialog
+        open={openCoffeeDialog}
+        onClose={() => setOpenCoffeeDialog(false)}
+      >
+        <DialogTitle>Support Us</DialogTitle>
+        <DialogContent style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px' }}>
+          <div style={{ textAlign: 'center', color: '#1976d2', fontSize: '1.2rem' }}>
+            ☕️ If you enjoy our service, consider buying us a coffee! 
+            <br />
+            <a 
+              href="https://www.buymeacoffee.com/yourusername" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{ color: '#ffcc00', fontWeight: 'bold', textDecoration: 'underline' }}
+            >
+              Buy Me a Coffee
+            </a>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCoffeeDialog(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  )
+}

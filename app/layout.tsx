@@ -4,9 +4,8 @@ import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/theme/ThemeRegistry';
 import RootErrorBoundary from '@/app/components/errorBoundary/ErrorBoundaryPage';
 import { getSession } from '@/lib/server/supabase';
-import Sidebar from '@/app/components/ui/Navbar/SideBar';
-import { Box } from '@mui/material';
 import Header from '@/app/components/ui/Header/Header';
+import Box from '@mui/material/Box';
 
 import '@fontsource/inter';
 
@@ -43,14 +42,13 @@ export default async function RootLayout({
         <ThemeRegistry>
           <RootErrorBoundary>
             <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-              {isSessionAvailable && <Sidebar session={isSessionAvailable} />}
               <Box
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
                   flexGrow: 1,
-                  width: isSessionAvailable ? '100%' : '100%',
-                  marginLeft: isSessionAvailable ? '50px' : 0
+                  width: '100%',
+                  marginLeft: 0
                 }}
               >
                 <Header isSessionAvailable={isSessionAvailable} />

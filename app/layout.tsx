@@ -54,7 +54,7 @@ export default async function RootLayout({
                     flexGrow: 1,
                     overflow: 'auto',
                     padding: {
-                      xs: '10px 0',
+                      xs: '15px 15px',
                       sm: '10px 50px'
                     },
                     backgroundColor: '#f4f6f7'

@@ -2,7 +2,14 @@
 
 import { 
   Paper,
-  Button
+  Button,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from '@mui/material'
 import { 
   AreaChart, 
@@ -15,81 +22,197 @@ import {
   BarChart,
   Bar,
   LineChart,
-  Line
+  Line,
 } from 'recharts'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const data = [
-  { month: 'Jan', revenue: 4000, users: 2400 },
-  { month: 'Feb', revenue: 3000, users: 1398 },
-  { month: 'Mar', revenue: 2000, users: 9800 },
-  { month: 'Apr', revenue: 2780, users: 3908 },
-  { month: 'May', revenue: 1890, users: 4800 },
-  { month: 'Jun', revenue: 2390, users: 3800 },
-]
-
-const metrics = [
-  { title: 'Total Revenue', value: '$23,456', change: '+12.3%' },
-  { title: 'Active Users', value: '12,234', change: '+2.3%' },
-  { title: 'Conversion Rate', value: '3.8%', change: '-0.4%' },
-]
-
-const countyData = [
-  { county: 'County A', medianPrice: 350000 },
-  { county: 'County B', medianPrice: 450000 },
-  { county: 'County C', medianPrice: 550000 },
-  { county: 'County D', medianPrice: 600000 },
-  { county: 'County E', medianPrice: 700000 },
-  { county: 'County F', medianPrice: 750000 },
-  { county: 'County G', medianPrice: 800000 },
-  { county: 'County H', medianPrice: 850000 },
-  { county: 'County I', medianPrice: 900000 },
-  { county: 'County J', medianPrice: 950000 },
-  { county: 'County K', medianPrice: 1000000 },
-  { county: 'County L', medianPrice: 1100000 },
-  { county: 'County M', medianPrice: 1200000 },
-  { county: 'County N', medianPrice: 1300000 },
-  { county: 'County O', medianPrice: 1400000 },
-  { county: 'County P', medianPrice: 1500000 },
-  { county: 'County Q', medianPrice: 1600000 },
-  { county: 'County R', medianPrice: 1700000 },
-  { county: 'County S', medianPrice: 1800000 },
-  { county: 'County T', medianPrice: 1900000 },
-  { county: 'County U', medianPrice: 2000000 },
-  { county: 'County V', medianPrice: 2100000 },
-  { county: 'County W', medianPrice: 2200000 },
-  { county: 'County X', medianPrice: 2300000 },
-  { county: 'County Y', medianPrice: 2400000 },
-  { county: 'County Z', medianPrice: 2500000 },
-  // ... add more counties as needed ...
-];
+const COUNTY_COLORS = {
+  'Carlow': '#FF0000', // Red and Green
+  'Cavan': '#0000FF', // Royal Blue and Grey
+  'Clare': '#FFD700', // Yellow and Blue
+  'Cork': '#FF0000', // Red and Grey
+  'Derry': '#FF0000', // Red and Grey
+  'Donegal': '#FFD700', // Yellow and Green
+  'Down': '#FF0000', // Red and Black
+  'Dublin': '#0000FF', // Navy Blue and Sky Blue
+  'Fermanagh': '#008000', // Green and Grey
+  'Galway': '#800000', // Maroon and Grey
+  'Kerry': '#008000', // Green and Gold
+  'Kildare': '#808080', // Grey and Red
+  'Kilkenny': '#000000', // Black and Amber
+  'Laois': '#0000FF', // Blue and Grey
+  'Leitrim': '#008000', // Green and Gold
+  'Limerick': '#008000', // Green and Grey
+  'Longford': '#0000FF', // Blue and Gold
+  'Louth': '#FF0000', // Red and Grey
+  'Mayo': '#008000', // Green and Red
+  'Meath': '#008000', // Green and Gold
+  'Monaghan': '#808080', // Grey and Blue
+  'Offaly': '#008000', // Green, Grey and Gold
+  'Roscommon': '#FFD700', // Yellow and Blue
+  'Sligo': '#000000', // Black and Grey
+  'Tipperary': '#0000FF', // Blue and Gold
+  'Tyrone': '#808080', // Grey and Red
+  'Waterford': '#0000FF', // Blue and Grey
+  'Westmeath': '#800000', // Maroon and Grey
+  'Wexford': '#800080', // Purple and Gold
+  'Wicklow': '#0000FF', // Blue and Gold
+};
 
 export default function GraphsPage() {
   const [currentChart, setCurrentChart] = useState('line');
+  const [visibleLines, setVisibleLines] = useState({});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('/api/contracts');
+        const groupedData = response.data.data.reduce((acc, record) => {
+          const year = new Date(record.date).getFullYear();
+          if (!acc[year]) acc[year] = {};
+          if (!acc[year][record.county]) {
+            acc[year][record.county] = {
+              prices: [],
+              count: 0
+            };
+          }
+          acc[year][record.county].prices.push(record.price);
+          acc[year][record.county].count++;
+          return acc;
+        }, {});
+
+        const processedData = Object.entries(groupedData).map(([year, counties]) => {
+          const yearData = { year: parseInt(year) };
+          Object.entries(counties).forEach(([county, data]) => {
+            const median = calculateMedian(data.prices);
+            yearData[county] = median;
+          });
+          return yearData;
+        });
+
+        setData(processedData.sort((a, b) => a.year - b.year));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      const counties = Object.keys(data[0]).filter(key => key !== 'year');
+      const initialVisibility = counties.reduce((acc, county) => {
+        acc[county] = true;
+        return acc;
+      }, {});
+      setVisibleLines(initialVisibility);
+    }
+  }, [data]);
+
+  const calculateMedian = (prices) => {
+    const sorted = prices.sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+      ? (sorted[middle - 1] + sorted[middle]) / 2
+      : sorted[middle];
+  };
 
   const renderChart = () => {
+    if (loading) {
+      return <CircularProgress />;
+    }
+
     switch (currentChart) {
       case 'line':
+        const counties = data.length > 0 
+          ? Object.keys(data[0]).filter(key => key !== 'year')
+          : [];
+
         return (
           <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
-            <h3 className="text-lg font-medium mb-4">Line Chart</h3>
-            <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+            <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
+            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex' }}>
+              <ResponsiveContainer width="85%" height="100%">
+                <LineChart 
+                  data={data}
+                  margin={{ right: 30 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="revenue" stroke="#8884d8" strokeWidth={2} />
+                  <XAxis dataKey="year" />
+                  <YAxis 
+                    tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value) => `€${value.toLocaleString()}`}
+                    itemSorter={(item) => -item.value}
+                  />
+                  {counties.map((county) => (
+                    visibleLines[county] && (
+                      <Line 
+                        key={county}
+                        type="monotone" 
+                        dataKey={county}
+                        name={county}
+                        stroke={COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`}
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    )
+                  ))}
                 </LineChart>
               </ResponsiveContainer>
+              <div style={{ width: '15%', overflowY: 'auto', paddingLeft: '10px' }}>
+                {counties.map((county) => (
+                  <div
+                    key={county}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginBottom: '8px',
+                      cursor: 'pointer',
+                      opacity: visibleLines[county] ? 1 : 0.5,
+                    }}
+                    onClick={() => {
+                      setVisibleLines(prev => ({
+                        ...prev,
+                        [county]: !prev[county]
+                      }));
+                    }}
+                    onDoubleClick={() => {
+                      const allFalse = Object.fromEntries(
+                        counties.map(c => [c, false])
+                      );
+                      setVisibleLines({
+                        ...allFalse,
+                        [county]: true
+                      });
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        backgroundColor: COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`,
+                        marginRight: '8px',
+                      }}
+                    />
+                    <span style={{ fontSize: '0.875rem' }}>{county}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </Paper>
         );
       case 'area':
         return (
           <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
-            <h3 className="text-lg font-medium mb-4">Area Chart</h3>
+            <h3 className="text-lg font-medium mb-4">Number of Sales Over Time</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data}>
@@ -97,7 +220,7 @@ export default function GraphsPage() {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Area type="monotone" dataKey="users" fill="#82ca9d" stroke="#82ca9d" />
+                  <Area type="monotone" dataKey="count" fill="#82ca9d" stroke="#82ca9d" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -156,6 +279,45 @@ export default function GraphsPage() {
 
       {/* Chart Section */}
       {renderChart()}
+
+      {/* Data Table */}
+      {!loading && data.length > 0 && (
+        <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
+          <h3 className="text-lg font-medium mb-4">Median House Prices by County and Year</h3>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell><strong>County</strong></TableCell>
+                  {data.map(yearData => (
+                    <TableCell key={yearData.year} align="right">
+                      <strong>{yearData.year}</strong>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.keys(data[0])
+                  .filter(key => key !== 'year')
+                  .map(county => (
+                    <TableRow key={county}>
+                      <TableCell component="th" scope="row">
+                        {county}
+                      </TableCell>
+                      {data.map(yearData => (
+                        <TableCell key={yearData.year} align="right">
+                          {yearData[county] 
+                            ? `€${yearData[county].toLocaleString()}`
+                            : '-'}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
     </div>
   )
 }

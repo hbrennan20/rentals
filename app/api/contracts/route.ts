@@ -1,15 +1,7 @@
-import { Redis } from 'ioredis';
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import { parse } from 'csv-parse';
 import { createReadStream } from 'fs';
-
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
-
-// Add error handling for Redis connection
-redis.on('error', (err) => {
-  console.error('Redis connection error:', err);
-});
 
 // Update the interface to match the CSV structure
 interface PropertyRecord {
@@ -40,74 +32,48 @@ interface SortParams {
 }
 
 async function loadDataIntoCache() {
-  const cacheKey = 'property_records';
+  const csvPath = path.join(process.cwd(), 'county_year_prices.csv');
   
-  try {
-    const isCached = await redis.exists(cacheKey);
+  return new Promise((resolve, reject) => {
+    const results: PropertyRecord[] = [];
     
-    if (isCached) {
-      const cachedData = await redis.get(cacheKey);
-      if (!cachedData) throw new Error('Cached data is null');
-      return JSON.parse(cachedData);
+    // Verify file exists
+    if (!createReadStream(csvPath)) {
+      reject(new Error(`CSV file not found at path: ${csvPath}`));
+      return;
     }
 
-    return new Promise((resolve, reject) => {
-      const results: PropertyRecord[] = [];
-      const csvPath = path.join(process.cwd(), 'PPR-ALL 2.csv');
-      
-      // Verify file exists
-      if (!createReadStream(csvPath)) {
-        reject(new Error(`CSV file not found at path: ${csvPath}`));
-        return;
-      }
+    const parser = parse({ columns: true, skip_empty_lines: true, trim: true, bom: true });
 
-      const parser = parse({ columns: true, skip_empty_lines: true, trim: true, bom: true });
-
-      createReadStream(csvPath)
-        .pipe(parser)
-        .on('data', (data: PropertyRecord) => results.push(data))
-        .on('end', async () => {
-          try {
-            const processedData = results.map(record => ({
-              date: record['Date of Sale (dd/mm/yyyy)'],
-              address: record.Address,
-              county: record.County,
-              price: parseFloat(record.Price.replace(/[€,\s]/g, '')),
-            }));
-            
-            await redis.set(cacheKey, JSON.stringify(processedData), 'EX', 86400);
-            resolve(processedData);
-          } catch (error) {
-            reject(error);
-          }
-        })
-        .on('error', reject);
-    });
-  } catch (error) {
-    console.error('Errors in loadDataIntoCache:', error);
-    throw error;
-  }
+    createReadStream(csvPath)
+      .pipe(parser)
+      .on('data', (data: PropertyRecord) => results.push(data))
+      .on('end', () => {
+        const processedData = results.map(record => ({
+          date: record.Year,
+          address: record.Address,
+          county: record.County,
+          price: Number(record.Median_Price),
+          count: Number(record.Count),
+        }));
+        
+        resolve(processedData);
+      })
+      .on('error', reject);
+  });
 }
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '15');
     
-    // Get filter parameters
+    // Remove page and limit params, only keep filters
     const filters: FilterParams = {
       county: searchParams.get('county') || undefined,
       minPrice: searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')!) : undefined,
       maxPrice: searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')!) : undefined,
       dateFrom: searchParams.get('dateFrom') || undefined,
       dateTo: searchParams.get('dateTo') || undefined,
-    };
-
-    // Get sorting parameters
-    const sortParams: SortParams = {
-      sortBy: searchParams.get('sortBy') as keyof PropertyRecord || undefined,
-      sortOrder: searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc',
     };
 
     const data = await loadDataIntoCache();
@@ -123,33 +89,13 @@ export async function GET(request: NextRequest) {
       return matches;
     });
 
-    // Apply sorting
-    if (sortParams.sortBy) {
-      filteredData.sort((a, b) => {
-        const aValue = a[sortParams.sortBy];
-        const bValue = b[sortParams.sortBy];
-
-        if (sortParams.sortOrder === 'asc') {
-          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-        } else {
-          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-        }
-      });
-    }
-
-    const startIndex = (page - 1) * limit;
-    const paginatedResults = filteredData.slice(startIndex, startIndex + limit);
-
     return NextResponse.json({
-      data: paginatedResults,
-      total: filteredData.length,
-      page,
-      limit
+      data: filteredData,
+      total: filteredData.length
     });
 
   } catch (error) {
     console.error('Error processing request:', error);
-    // Return more detailed error message
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'

@@ -24,12 +24,12 @@ import {
 } from '@mui/material';
 
 const HistoricContracts = () => {
-    const [data, setData] = useState([]);
+    const [allData, setAllData] = useState<{ county: string; year: number; count: number; medianPrice: number }[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
-    const limit = 15;  // Changed from 20 to 15
+    const limit = 15;
     const [filters, setFilters] = useState({
         county: '',
         minPrice: '',
@@ -46,7 +46,7 @@ const HistoricContracts = () => {
     ]);
     const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'ascending' });
 
-    const sortedData = [...data].sort((a, b) => {
+    const sortedData = [...allData].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
             return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -64,7 +64,7 @@ const HistoricContracts = () => {
         setSortConfig({ key, direction });
         
         // Sort the original data instead of sortedData
-        const sorted = [...data].sort((a, b) => {
+        const sorted = [...allData].sort((a, b) => {
             if (a[key] < b[key]) {
                 return direction === 'ascending' ? -1 : 1;
             }
@@ -73,15 +73,13 @@ const HistoricContracts = () => {
             }
             return 0;
         });
-        setData(sorted); // Update the data state with sorted data
+        setAllData(sorted); // Update the data state with sorted data
     };
 
     const fetchData = async () => {
         setLoading(true);
         try {
             const queryParams = new URLSearchParams({
-                page: page.toString(),
-                limit: limit.toString(),
                 ...(filters.county && { county: filters.county }),
                 ...(filters.minPrice && { minPrice: filters.minPrice }),
                 ...(filters.maxPrice && { maxPrice: filters.maxPrice }),
@@ -90,7 +88,14 @@ const HistoricContracts = () => {
             });
 
             const response = await axios.get(`/api/contracts?${queryParams}`);
-            setData(response.data.data);
+            const processedData = response.data.data.map(record => ({
+                county: record.county,
+                year: record.date ? new Date(record.date).getFullYear() : null,
+                count: record.count,
+                medianPrice: record.price
+            }));
+            
+            setAllData(processedData);
             setTotalRecords(response.data.total);
             setTotalPages(Math.ceil(response.data.total / limit));
         } catch (error) {
@@ -115,6 +120,12 @@ const HistoricContracts = () => {
         };
         setFilters(newFilters);
         setPage(1);
+    };
+
+    // Calculate paginated data from allData
+    const getPaginatedData = () => {
+        const startIndex = (page - 1) * limit;
+        return allData.slice(startIndex, startIndex + limit);
     };
 
     return (
@@ -196,23 +207,23 @@ const HistoricContracts = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell onClick={() => requestSort('address')}>Address</TableCell>
-                            <TableCell onClick={() => requestSort('date')}>Date</TableCell>
-                            <TableCell onClick={() => requestSort('price')}>Price</TableCell>
                             <TableCell onClick={() => requestSort('county')}>County</TableCell>
+                            <TableCell onClick={() => requestSort('year')}>Year</TableCell>
+                            <TableCell onClick={() => requestSort('medianPrice')}>Median Price</TableCell>
+                            <TableCell onClick={() => requestSort('count')}>Count</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {sortedData.map((contract, index) => (
+                        {getPaginatedData().map((contract, index) => (
                             <TableRow key={index}>
-                                <TableCell>{contract.address}</TableCell>
-                                <TableCell>{new Date(contract.date).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    {contract.price !== null && contract.price !== undefined 
-                                        ? `€${contract.price.toLocaleString()}`
-                                        : `N/A (${JSON.stringify(contract.price)})`}
-                                </TableCell>
                                 <TableCell>{contract.county}</TableCell>
+                                <TableCell>{contract.year}</TableCell>
+                                <TableCell>
+                                    {contract.medianPrice !== null && contract.medianPrice !== undefined 
+                                        ? `€${contract.medianPrice.toLocaleString()}`
+                                        : `N/A (${JSON.stringify(contract.medianPrice)})`}
+                                </TableCell>
+                                <TableCell>{contract.count}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

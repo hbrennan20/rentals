@@ -3,7 +3,6 @@ import React, { type ReactNode } from 'react';
 import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/theme/ThemeRegistry';
 import RootErrorBoundary from '@/app/components/errorBoundary/ErrorBoundaryPage';
-import { getSession } from '@/lib/server/supabase';
 import Header from '@/app/components/ui/Header/Header';
 import Box from '@mui/material/Box';
 
@@ -30,9 +29,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const session = await getSession(); // Get session
-  const isSessionAvailable = session !== null;
-
   return (
     <html lang="en">
       <head>
@@ -51,7 +47,7 @@ export default async function RootLayout({
                   marginLeft: 0
                 }}
               >
-                <Header isSessionAvailable={isSessionAvailable} />
+                <Header />
                 <Box
                   component="main"
                   sx={{

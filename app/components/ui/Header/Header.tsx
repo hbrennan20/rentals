@@ -57,63 +57,6 @@ export default function Header({ isSessionAvailable }: HeaderProps) {
             Property
           </Typography>
         </a>
-        {isSessionAvailable ? (
-          <Box>
-            <IconButton
-              sx={{ padding: 0 }}
-              onClick={handleMenuOpen}
-              aria-controls="profile-menu"
-              aria-haspopup="true"
-            >
-              <Avatar alt="User Profile"  />
-            </IconButton>
-            <Menu
-              id="profile-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right'
-              }}
-            >
-              <MenuItem
-                component={Link}
-                href="/profile"
-                onClick={handleMenuClose}
-              >
-                <AccountCircleIcon sx={{ mr: 1 }} />
-                Profile
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                href="/settings"
-                onClick={handleMenuClose}
-              >
-                <SettingsIcon sx={{ mr: 1 }} />
-                Settings
-              </MenuItem>
-              <MenuItem onClick={handleMenuClose}>
-                <SignOut />
-              </MenuItem>
-            </Menu>
-          </Box>
-        ) : (
-          <>
-            <Link href="/auth" passHref>
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: 'white', color: '#1b3135' }}
-              >
-                Sign In
-              </Button>
-            </Link>
-          </>
-        )}
       </Toolbar>
     </AppBar>
   );

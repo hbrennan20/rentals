@@ -1,7 +1,6 @@
 'use client'
 
 import { 
-  Paper,
   Button,
   CircularProgress,
   Table,
@@ -72,6 +71,7 @@ export default function GraphsPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openCoffeeDialog, setOpenCoffeeDialog] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,6 +130,13 @@ export default function GraphsPage() {
       : sorted[middle];
   };
 
+  const handleTooltipClick = () => {
+    setTooltipVisible(true);
+    setTimeout(() => {
+      setTooltipVisible(false);
+    }, 3000);
+  };
+
   const renderChart = () => {
     if (loading) {
       return <CircularProgress />;
@@ -142,22 +149,27 @@ export default function GraphsPage() {
           : [];
 
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px', overflow: 'auto' }}>
+          <div className="p-4 rounded-lg shadow-md bg-white mb-4" style={{ width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">Median House Prices by County</h3>
-            <div style={{ width: '100%', height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
-              <ResponsiveContainer width="100%" height={300}>
+            <div className="flex flex-col w-full">
+              <ResponsiveContainer width="100%" height={400}>
                 <LineChart 
                   data={data}
-                  margin={{ right: 30 }}
+                  margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
+                  <XAxis dataKey="year" tick={{ fontSize: 12 }} />
                   <YAxis 
                     tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
+                    tick={{ fontSize: 12 }}
+                    style={{ textAlign: 'left' }} // Align left
                   />
                   <Tooltip 
                     formatter={(value) => `€${value.toLocaleString()}`}
                     itemSorter={(item) => -item.value}
+                    open={tooltipVisible}
+                    onClick={handleTooltipClick}
+                    contentStyle={{ maxHeight: '200px', overflowY: 'auto' }}
                   />
                   {counties.map((county) => (
                     visibleLines[county] && (
@@ -174,15 +186,12 @@ export default function GraphsPage() {
                   ))}
                 </LineChart>
               </ResponsiveContainer>
-              <div style={{ width: '100%', overflowY: 'auto', paddingLeft: '10px' }}>
+              <div className="mt-4 grid grid-cols-4 gap-2 max-h-40 overflow-y-auto">
                 {counties.map((county) => (
                   <div
                     key={county}
+                    className="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: '8px',
-                      cursor: 'pointer',
                       opacity: visibleLines[county] ? 1 : 0.5,
                     }}
                     onClick={() => {
@@ -202,23 +211,21 @@ export default function GraphsPage() {
                     }}
                   >
                     <div
+                      className="w-3 h-3 mr-2 rounded-full"
                       style={{
-                        width: '12px',
-                        height: '12px',
-                        backgroundColor: COUNTY_COLORS[county] || `hsl(${(index * 360) / counties.length}, 70%, 50%)`,
-                        marginRight: '8px',
+                        backgroundColor: COUNTY_COLORS[county] || `hsl(${(counties.indexOf(county) * 360) / counties.length}, 70%, 50%)`,
                       }}
                     />
-                    <span style={{ fontSize: '0.875rem' }}>{county}</span>
+                    <span className="text-sm truncate">{county}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </Paper>
+          </div>
         );
       case 'area':
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <div style={{ padding: '16px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', backgroundColor: '#fff', marginBottom: '16px', width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">Number of Sales Over Time</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -231,11 +238,11 @@ export default function GraphsPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </Paper>
+          </div>
         );
       case 'bar':
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <div style={{ padding: '16px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', backgroundColor: '#fff', marginBottom: '16px', width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">Bar Chart</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -248,11 +255,11 @@ export default function GraphsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </Paper>
+          </div>
         );
       case 'county':
         return (
-          <Paper elevation={2} sx={{ p: 3, height: '600px' }}>
+          <div style={{ padding: '16px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', backgroundColor: '#fff', marginBottom: '16px', width: '100%' }}>
             <h3 className="text-lg font-medium mb-4">County Median House Prices</h3>
             <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -265,7 +272,7 @@ export default function GraphsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </Paper>
+          </div>
         );
       default:
         return null;
@@ -273,19 +280,18 @@ export default function GraphsPage() {
   };
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 max-w-full md:max-w-4xl mx-auto md:pl-0">
       <h1 className="text-2xl md:text-3xl font-bold mb-4">Dashboard</h1>
-      {/* Chart Section */}
       {renderChart()}
 
       {/* Data Table */}
       {!loading && data.length > 0 && (
-        <Paper elevation={2} sx={{ p: 2, mt: 4 }}>
+        <div className="p-4 rounded-lg shadow-md bg-white mt-4 overflow-x-auto">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-medium">Median House Prices by County and Year</h3>
           </div>
-          <TableContainer>
-            <Table size="small">
+          <TableContainer className="max-w-full">
+            <Table size="small" className="min-w-full">
               <TableHead>
                 <TableRow>
                   <TableCell><strong>County</strong></TableCell>
@@ -319,33 +325,29 @@ export default function GraphsPage() {
               </TableBody>
             </Table>
           </TableContainer>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+          <div className="flex justify-end mt-4">
             <IconButton 
               onClick={() => setOpenCoffeeDialog(true)}
               color="primary"
               title="Support Us"
-              sx={{ 
-                backgroundColor: '#1976d2', // Primary color
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#115293', // Darker shade on hover
-                },
-                borderRadius: '4px',
-                padding: '8px',
-              }}
+              className="rounded"
+              style={{ backgroundColor: '#1b3034', color: '#ffffff' }}
             >
               <DownloadIcon />
             </IconButton>
           </div>
-        </Paper>
+        </div>
       )}
 
+      {/* Dialog */}
       <Dialog
         open={openCoffeeDialog}
         onClose={() => setOpenCoffeeDialog(false)}
+        maxWidth="sm"
+        fullWidth
       >
         <DialogTitle>Support Us</DialogTitle>
-        <DialogContent style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px' }}>
+        <DialogContent style={{ backgroundColor: '#1b3034', padding: '20px', borderRadius: '8px' }}>
           <div style={{ textAlign: 'center', color: '#1976d2', fontSize: '1.2rem' }}>
             ☕️ If you enjoy our service, consider buying us a coffee! 
             <br />

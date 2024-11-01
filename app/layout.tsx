@@ -53,7 +53,10 @@ export default async function RootLayout({
                   sx={{
                     flexGrow: 1,
                     overflow: 'auto',
-                    padding: '10px 50px 10px 50px', // Updated left and right padding
+                    padding: {
+                      xs: '10px 0',
+                      sm: '10px 50px'
+                    },
                     backgroundColor: '#f4f6f7'
                   }}
                 >

@@ -324,10 +324,10 @@ export default function GraphsPage() {
             <TableBody>
               {/* Provinces */}
               <TableRow>
-                <TableCell>
+                <TableCell style={{ display: 'flex', alignItems: 'center' }}>
                   <Checkbox 
-                    checked={PROVINCE_COUNTIES.Leinster.every(county => selectedCounties.has(county))} // Check if all counties are selected
-                    indeterminate={PROVINCE_COUNTIES.Leinster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Leinster.every(county => selectedCounties.has(county))} // Check if some but not all are selected
+                    checked={PROVINCE_COUNTIES.Leinster.every(county => selectedCounties.has(county))} 
+                    indeterminate={PROVINCE_COUNTIES.Leinster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Leinster.every(county => selectedCounties.has(county))}
                     onChange={() => handleProvinceSelect('Leinster')} 
                     size="small"
                   />
@@ -349,10 +349,10 @@ export default function GraphsPage() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>
+                <TableCell style={{ display: 'flex', alignItems: 'center' }}>
                   <Checkbox 
-                    checked={PROVINCE_COUNTIES.Munster.every(county => selectedCounties.has(county))} // Check if all counties are selected
-                    indeterminate={PROVINCE_COUNTIES.Munster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Munster.every(county => selectedCounties.has(county))} // Check if some but not all are selected
+                    checked={PROVINCE_COUNTIES.Munster.every(county => selectedCounties.has(county))} 
+                    indeterminate={PROVINCE_COUNTIES.Munster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Munster.every(county => selectedCounties.has(county))}
                     onChange={() => handleProvinceSelect('Munster')} 
                     size="small"
                   />
@@ -374,10 +374,10 @@ export default function GraphsPage() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>
+                <TableCell style={{ display: 'flex', alignItems: 'center' }}>
                   <Checkbox 
-                    checked={PROVINCE_COUNTIES.Connacht.every(county => selectedCounties.has(county))} // Check if all counties are selected
-                    indeterminate={PROVINCE_COUNTIES.Connacht.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Connacht.every(county => selectedCounties.has(county))} // Check if some but not all are selected
+                    checked={PROVINCE_COUNTIES.Connacht.every(county => selectedCounties.has(county))} 
+                    indeterminate={PROVINCE_COUNTIES.Connacht.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Connacht.every(county => selectedCounties.has(county))}
                     onChange={() => handleProvinceSelect('Connacht')} 
                     size="small"
                   />
@@ -399,10 +399,10 @@ export default function GraphsPage() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>
+                <TableCell style={{ display: 'flex', alignItems: 'center' }}>
                   <Checkbox 
-                    checked={PROVINCE_COUNTIES.Ulster.every(county => selectedCounties.has(county))} // Check if all counties are selected
-                    indeterminate={PROVINCE_COUNTIES.Ulster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Ulster.every(county => selectedCounties.has(county))} // Check if some but not all are selected
+                    checked={PROVINCE_COUNTIES.Ulster.every(county => selectedCounties.has(county))} 
+                    indeterminate={PROVINCE_COUNTIES.Ulster.some(county => selectedCounties.has(county)) && !PROVINCE_COUNTIES.Ulster.every(county => selectedCounties.has(county))}
                     onChange={() => handleProvinceSelect('Ulster')} 
                     size="small"
                   />
@@ -438,9 +438,13 @@ export default function GraphsPage() {
             <Table size="small" className="min-w-full">
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>County</strong></TableCell>
+                  <TableCell style={{ minWidth: '100px' }}><strong>County</strong></TableCell>
                   {filteredData.map(yearData => (
-                    <TableCell key={yearData.year} align="right">
+                    <TableCell 
+                      key={yearData.year} 
+                      align="right"
+                      style={{ minWidth: '80px' }}
+                    >
                       <strong>{yearData.year}</strong>
                     </TableCell>
                   ))}
@@ -452,11 +456,19 @@ export default function GraphsPage() {
                     key={county}
                     sx={{ backgroundColor: index % 2 ? '#f5f5f5' : 'inherit' }}
                   >
-                    <TableCell component="th" scope="row">
+                    <TableCell 
+                      component="th" 
+                      scope="row"
+                      style={{ minWidth: '100px' }}
+                    >
                       {county}
                     </TableCell>
                     {filteredData.map(yearData => (
-                      <TableCell key={yearData.year} align="right">
+                      <TableCell 
+                        key={yearData.year} 
+                        align="right"
+                        style={{ minWidth: '80px' }}
+                      >
                         {yearData[county] 
                           ? `€${(yearData[county] / 1000).toFixed(0)}k`
                           : '-'}
@@ -488,8 +500,8 @@ export default function GraphsPage() {
         fullWidth
       >
         <DialogTitle>Support Us</DialogTitle>
-        <DialogContent style={{ backgroundColor: '#1b3034', padding: '20px', borderRadius: '8px' }}>
-          <div style={{ textAlign: 'center', color: 'white', fontSize: '1.2rem' }}>
+        <DialogContent style={{ backgroundColor: '#1b3034', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
+          <div style={{ color: 'white', fontSize: '1.2rem' }}>
             ☕️ If you enjoy our service, consider buying us a coffee! 
             <br />
             <a 
@@ -501,12 +513,11 @@ export default function GraphsPage() {
               Buy Me a Coffee
             </a>
           </div>
-          <div className="flex justify-center mt-4" style={{ fontSize: '1.5rem' }}>
+          <div style={{ fontSize: '1.5rem', marginTop: '20px' }}>
             <Button 
               onClick={handleDownload}
               variant="contained"
-              color="primary"
-              style={{ backgroundColor: '#1b3034', color: '#ffffff', padding: '12px 24px', margin: '0 auto' }}
+              style={{ backgroundColor: '#ffffff', color: '#000000', padding: '12px 24px' }}
             >
               Download Data
             </Button>
